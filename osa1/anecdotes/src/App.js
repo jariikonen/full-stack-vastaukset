@@ -3,6 +3,21 @@ import { useState } from 'react';
 const Button = ({ clickHandler, text }) =>
   <button onClick={clickHandler}>{text}</button>;
 
+const MostVotes = ({ text, votes }) => {
+  console.log('MostVotes: text:', text, 'votes:', votes)
+
+  if ( votes > 0 ) {
+    return (
+      <>
+        <div>{text}</div>
+        <div>has {votes} votes</div>
+      </>
+    )
+  }
+
+  return <div>{text}</div>
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -37,14 +52,24 @@ const App = () => {
   const copyPoints = [...points];
   copyPoints[selected] += 1;
   
-  console.log('points:', points, 'copyPoints:', copyPoints)
+  const maxVotes = Math.max(...points);
+  let mostVotesStr = 'No votes given';
+  if ( maxVotes > 0 ) {
+    const mostVotes = points.indexOf(maxVotes);
+    mostVotesStr = anecdotes[mostVotes];
+  }
+
+  console.log('points:', points, 'copyPoints:', copyPoints);
 
   return (
     <div>
+      <h2>Anecdote of the day</h2>
       <div>{anecdotes[selected]}</div>
-      <div>has {points[selected]} points</div>
+      <div>has {points[selected]} votes</div>
       <Button clickHandler={handler(setPoints, copyPoints)} text='vote' />
       <Button clickHandler={handler(setSelected, anecdoteIndex)} text='next anecdote' />
+      <h2>Anecdote with most votes</h2>
+      <MostVotes text={mostVotesStr} votes={maxVotes} />
     </div>
   )
 }
