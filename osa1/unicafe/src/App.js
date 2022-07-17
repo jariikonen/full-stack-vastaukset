@@ -8,15 +8,21 @@ const Statistics = ({ good, neutral, bad }) => {
   const average=(good*1+bad*(-1))/all
   const positive=good/all
 
+  if ( all > 0 ) {
+    return (
+      <>
+        <p>good {good}</p>
+        <p>neutral {neutral}</p>
+        <p>bad {bad}</p>
+        <p>all {all}</p>
+        <p>average {average.toFixed(2)}</p>
+        <p>positive {(positive*100).toFixed(1)}%</p>
+      </>
+    )
+  }
+
   return (
-    <>
-      <p>good {good}</p>
-      <p>neutral {neutral}</p>
-      <p>bad {bad}</p>
-      <p>all {all}</p>
-      <p>average {average.toFixed(2)}</p>
-      <p>positive {(positive*100).toFixed(1)}%</p>
-    </>
+    <p>No feedback given</p>
   )
 }
 
