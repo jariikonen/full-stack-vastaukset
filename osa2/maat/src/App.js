@@ -14,12 +14,15 @@ const FilterForm = ({ filterHandler }) =>
     <br />
   </form>;
 
-const CountryList = ({ countries }) =>
-  <>
+const CountryList = ({ countries, formHandler }) =>
+  <form>
     {countries.map(country =>
-      <div key={country.name.common}>{country.name.common}</div>
+      <div key={country.name.common}>
+        {country.name.common}
+        <button type="button" onClick={formHandler} value={`${country.name.common}`}>show</button>
+      </div>
     )}
-  </>
+  </form>
 
 const CountryData = ({ country }) =>
   <>
@@ -29,7 +32,7 @@ const CountryData = ({ country }) =>
     <h4>languages:</h4>
     <ul>
       {Object.values(country.languages).map(language =>
-        <li>{language}</li>
+        <li key={language}>{language}</li>
       )}
     </ul>
     <img src={`${country.flags.png}`} />
@@ -60,7 +63,6 @@ const App = () => {
   );
 
   const handleFilterChange = (event) => {
-    setFilterValue(event.target.value)
     const found = countries.filter(country =>
       country.name.common.toLowerCase().includes(
         event.target.value.toLowerCase()
@@ -68,9 +70,12 @@ const App = () => {
     setCountriesToShow(found);
   }
 
-  console.log('countriesToShow.length:', countriesToShow.length)
+  const handleCountryListButtons = (event) =>
+    setCountriesToShow([countriesToShow.find(country =>
+      country.name.common === event.target.value
+    )]);
+
   if ( countriesToShow.length === 1 ) {
-    console.log('1 maa:', countriesToShow[0].name.common, countriesToShow[0])
     return (
       <>
         <Header />
@@ -79,16 +84,17 @@ const App = () => {
       </>
     );
   } else if ( countriesToShow.length > 1 && countriesToShow.length < 11 ) {
-    console.log('1-10 maata')
     return (
       <>
         <Header />
         <FilterForm filterHandler={handleFilterChange} />
-        <CountryList countries={countriesToShow} />
+        <CountryList
+          countries={countriesToShow}
+          formHandler={handleCountryListButtons}
+        />
       </>
     );
   } else if ( countriesToShow.length > 10 ) {
-    console.log('liikaa maita')
     return (
       <>
         <Header />
