@@ -53,10 +53,13 @@ const App = () => {
       .then(response => {
         console.log('promise fulfilled');
         setPersons(response.data);
-        setPersonsToShow(persons)
+        setPersonsToShow(response.data);
       });
   }, []);
-  console.log('render', persons.length, 'persons:', persons);
+  console.log(
+    'render', personsToShow.length,
+    'personsToShow:', personsToShow,
+    'all persons:', persons);
 
   const addPerson = (event) => {
     event.preventDefault();
