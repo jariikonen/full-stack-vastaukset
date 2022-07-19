@@ -1,5 +1,43 @@
 import { useState } from 'react';
 
+const Filter = ({ filterHandler }) =>
+  <form>
+    <div>
+      filter shown with: <input
+        onChange={filterHandler}
+      />
+    </div>
+  </form>
+
+const PersonForm = ({
+    submitHandler, newNameState, nameChangeHandler,
+    newNumberState, numberChangeHandler
+}) =>
+  <form onSubmit={submitHandler}>
+    <div>
+      name: <input
+        value={newNameState}
+        onChange={nameChangeHandler}
+      />
+    </div>
+    <div>
+      number: <input
+        value={newNumberState}
+        onChange={numberChangeHandler}
+      />
+    </div>
+    <div>
+      <button type="submit">add</button>
+    </div>
+  </form>
+
+const Persons = ({ persons }) =>
+  <>
+    {persons.map(person =>
+      <div key={person.name}>{person.name} {person.number}</div>
+    )}
+  </>
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456' },
@@ -18,7 +56,6 @@ const App = () => {
     const found = persons.find(person =>
       person.name === newName
     );
-
     if (found) {
       alert(`${newName} is already in the phonebook`);
     }
@@ -64,35 +101,21 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with: <input
-            onChange={handleFilterChange}
-          />
-        </div>
-      </form>
+      <Filter
+        filterHandler={handleFilterChange}
+      />
+
       <h2>Add new contact</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input
-            value={newName}
-            onChange={handleNameChange}
-          />
-        </div>
-        <div>
-          number: <input
-            value={newNumber}
-            onChange={handleNumberChange}
-          />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        submitHandler={addPerson}
+        newNameState={newName}
+        nameChangeHandler={handleNameChange}
+        newNumberState={newNumber}
+        numberChangeHandler={handleNumberChange}
+      />
+
       <h2>Numbers</h2>
-      {personsToShow.map(person =>
-        <div key={person.name}>{person.name} {person.number}</div>
-      )}
+      <Persons persons={personsToShow} />
     </div>
   );
 
