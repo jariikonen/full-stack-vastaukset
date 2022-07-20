@@ -41,12 +41,17 @@ const CountryData = ({ country }) =>
 const Weather = ({ weatherObj }) => {
   if (weatherObj.city === 'undefined') {
     console.log('Weather component: weatherObj.city === undefined');
-    return;
+    const error = typeof weatherObj.error === 'undefined' ? '' : `(${weatherObj.error})`;
+    return (
+      <>
+        <h4>No weather {error}</h4>
+      </>
+    );
   }
   console.log('Weather component:', weatherObj);
   return (
     <>
-      <h4>Weather in {weatherObj.city}</h4>
+      <h4>weather in {weatherObj.city}</h4>
       <div>temperature: {weatherObj.data.main.temp} <sup><small>o</small></sup>C</div>
       <img src={`http://openweathermap.org/img/wn/${weatherObj.data.weather[0].icon}@2x.png`} />
       <div>wind: {weatherObj.data.wind.speed} m/s ({weatherObj.data.wind.deg} degrees)</div>
@@ -98,7 +103,16 @@ const App = () => {
       console.log('weather effect: data still fresh');
       return;
     }
-    console.log('weather effect: refresh data')
+    console.log('weather effect: refresh data', country)
+    
+    if (typeof country.capitalInfo.latlng === 'undefined') {
+      console.log('weather effect: capitalInfo is empty', country);
+      setWeatherData({
+        city: 'undefined',
+        error: 'capitalInfo is empty'
+      });
+      return;
+    }
 
     const url = 'https://api.openweathermap.org/data/2.5/weather';
     const lat = country.capitalInfo.latlng[0];
