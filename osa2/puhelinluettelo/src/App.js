@@ -1,12 +1,10 @@
-import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { useState, useEffect } from 'react'
+import personService from './services/persons'
 
 const Filter = ({ filterHandler }) =>
   <form>
     <div>
-      filter shown with: <input
-        onChange={filterHandler}
-      />
+      filter shown with: <input onChange={filterHandler} />
     </div>
   </form>
 
@@ -40,73 +38,78 @@ const Persons = ({ persons }) =>
   </>
 
 const App = () => {
-  const [persons, setPersons] = useState([]);
-  const [newName, setNewName] = useState('');
-  const [newNumber, setNewNumber] = useState('');
-  const [personsToShow, setPersonsToShow] = useState(persons)
+  const [persons, setPersons] = useState([])
+  const [newName, setNewName] = useState('')
+  const [newNumber, setNewNumber] = useState('')
+  const [personsToShow, setPersonsToShow] = useState([])
   const [filterValue, setFilterValue] = useState('')
 
   useEffect (() => {
-    console.log('effect');
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('promise fulfilled');
-        setPersons(response.data);
-        setPersonsToShow(response.data);
-      });
-  }, []);
+    personService
+      .getAll()
+      .then(initialPersons => {
+        setPersons(initialPersons)
+        setPersonsToShow(initialPersons)
+      })
+  }, [])
   console.log(
     'render', personsToShow.length,
     'personsToShow:', personsToShow,
-    'all persons:', persons);
+    'all persons:', persons)
 
   const addPerson = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const found = persons.find(person =>
       person.name === newName
-    );
+    )
     if (found) {
-      alert(`${newName} is already in the phonebook`);
+      alert(`${newName} is already in the phonebook`)
     }
     else {
-      const personObject = {
+      const newPerson = {
         name: newName,
         number: newNumber
-      };
-      console.log('added new person:', personObject);
-      setPersons(persons.concat(personObject));
-
-      const show = personObject.name.toLowerCase().includes(
-        filterValue.toLowerCase()
-      );
-      if (show) {
-        console.log('new person is shown');
-        setPersonsToShow(personsToShow.concat(personObject));
       }
-      else {
-        console.log('new person is not shown');
-      };
-    };
+      personService
+        .create(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          console.log('added new person:', returnedPerson)
 
-    setNewName('');
-    setNewNumber('');
+          const show = returnedPerson.name.toLowerCase().includes(
+            filterValue.toLowerCase()
+          )
+          if (show) {
+            console.log('new person is shown')
+            setPersonsToShow(personsToShow.concat(returnedPerson))
+          }
+          else {
+            console.log('new person is not shown')
+          }
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
+
+    setNewName('')
+    setNewNumber('')
   }
 
   const handleNameChange = (event) =>
-    setNewName(event.target.value);
+    setNewName(event.target.value)
 
   const handleNumberChange = (event) =>
-    setNewNumber(event.target.value);
+    setNewNumber(event.target.value)
   
   const handleFilterChange = (event) => {
     setFilterValue(event.target.value)
     const found = persons.filter(person =>
       person.name.toLowerCase().includes(
         event.target.value.toLowerCase()
-    ));
-    setPersonsToShow(found);
+    ))
+    setPersonsToShow(found)
   }
 
   return (
@@ -128,8 +131,8 @@ const App = () => {
       <h2>Numbers</h2>
       <Persons persons={personsToShow} />
     </div>
-  );
+  )
 
-};
+}
 
-export default App;
+export default App
