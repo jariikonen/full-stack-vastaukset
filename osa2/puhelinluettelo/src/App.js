@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 
-const Filter = ({ filterHandler }) =>
+const Filter = ({ filterHandler }) => (
   <form>
     <div>
       filter shown with: <input onChange={filterHandler} />
     </div>
   </form>
+)
 
 const PersonForm = ({
     submitHandler, newNameState, nameChangeHandler,
     newNumberState, numberChangeHandler
-}) =>
+}) => (
   <form onSubmit={submitHandler}>
     <div>
       name: <input
@@ -29,13 +30,13 @@ const PersonForm = ({
       <button type="submit">add</button>
     </div>
   </form>
+)
 
-const Persons = ({ persons }) =>
-  <>
-    {persons.map(person =>
-      <div key={person.name}>{person.name} {person.number}</div>
-    )}
-  </>
+const Person = ({ name, number, handleDelete }) => (
+  <div>
+    {name} {number} <button onClick={handleDelete}>Delete</button>
+  </div>
+)
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -57,6 +58,19 @@ const App = () => {
     'personsToShow:', personsToShow,
     'all persons:', persons)
 
+  const showIfVisible = (person) => {
+    const show = person.name.toLowerCase().includes(
+      filterValue.toLowerCase()
+    )
+    if (show) {
+      console.log(`person "${person.name}" is shown`)
+      setPersonsToShow(personsToShow.concat(person))
+    }
+    else {
+      console.log(`person "${person.name}" is not shown`)
+    }
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -72,21 +86,11 @@ const App = () => {
         number: newNumber
       }
       personService
-        .create(newPerson)
+        .createPerson(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
           console.log('added new person:', returnedPerson)
-
-          const show = returnedPerson.name.toLowerCase().includes(
-            filterValue.toLowerCase()
-          )
-          if (show) {
-            console.log('new person is shown')
-            setPersonsToShow(personsToShow.concat(returnedPerson))
-          }
-          else {
-            console.log('new person is not shown')
-          }
+          showIfVisible(returnedPerson)
         })
         .catch(error => {
           console.log(error)
@@ -105,11 +109,28 @@ const App = () => {
   
   const handleFilterChange = (event) => {
     setFilterValue(event.target.value)
-    const found = persons.filter(person =>
+    setPersonsToShow(persons.filter(person =>
       person.name.toLowerCase().includes(
         event.target.value.toLowerCase()
-    ))
-    setPersonsToShow(found)
+    )))
+  }
+
+  const handleDeleteOf = (id) => {
+    const person = persons.find(person =>
+      person.id === id
+    )
+
+    if (window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .deletePerson(id)
+        .then(returnedId => {
+          setPersons(persons.filter(n => n.id !== id))
+          setPersonsToShow(personsToShow.filter(n => n.id !== id))
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    }
   }
 
   return (
@@ -129,7 +150,16 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={personsToShow} />
+        {personsToShow.map(person => {
+          return (
+            <Person
+              key={person.id}
+              name={person.name}
+              number={person.number}
+              handleDelete={() => handleDeleteOf(person.id)}
+            />
+          )}
+        )}
     </div>
   )
 
