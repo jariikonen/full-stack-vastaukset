@@ -71,6 +71,40 @@ const App = () => {
     }
   }
 
+  const createPerson = (newPerson) => {
+    personService
+        .createPerson(newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.concat(returnedPerson))
+          console.log('added new person:', returnedPerson)
+          showIfVisible(returnedPerson)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+  }
+
+  const updatePerson = (newPerson) => {
+    personService
+        .updatePerson(newPerson.id, newPerson)
+        .then(returnedPerson => {
+          setPersons(persons.map(person =>
+            person.id !== newPerson.id ? person : newPerson
+          ))
+          setPersonsToShow(persons.map(person =>
+            person.id !== newPerson.id ? person : newPerson
+          ))
+          console.log('updated person:', returnedPerson)
+          setNewName('')
+          setNewNumber('')
+        })
+        .catch(error => {
+          console.log(error)
+        })
+  }
+
   const addPerson = (event) => {
     event.preventDefault()
 
@@ -78,27 +112,22 @@ const App = () => {
       person.name === newName
     )
     if (found) {
-      alert(`${newName} is already in the phonebook`)
+      if (window.confirm(
+        `${newName} is already in the phonebook, ` +
+        'replace the old number with a new one?'
+      )) {
+        updatePerson({
+          ...found,
+          number: newNumber
+        })
+      }
     }
     else {
-      const newPerson = {
+      createPerson({
         name: newName,
         number: newNumber
-      }
-      personService
-        .createPerson(newPerson)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          console.log('added new person:', returnedPerson)
-          showIfVisible(returnedPerson)
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      })
     }
-
-    setNewName('')
-    setNewNumber('')
   }
 
   const handleNameChange = (event) =>
