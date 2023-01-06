@@ -117,7 +117,7 @@ const App = () => {
           console.log('added new person:', returnedPerson)
         })
         .catch(error => {
-          setNotification(error.message, 'error')
+          setNotification(error.response.data.error, 'error')
           console.log(error)
         })
   }
@@ -187,7 +187,7 @@ const App = () => {
   const handleNumberChange = (event) => {
     setNewNumber(event.target.value)
   }
-  
+
   const handleFilterChange = (event) => {
     setFilterValue(event.target.value)
     setPersonsToShow(persons.filter(person =>
