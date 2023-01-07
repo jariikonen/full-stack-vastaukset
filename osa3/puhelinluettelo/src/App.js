@@ -123,6 +123,7 @@ const App = () => {
   }
 
   const updatePerson = (newPerson) => {
+    console.log('updating person')
     personService
         .updatePerson(newPerson.id, newPerson)
         .then(returnedPerson => {
@@ -141,17 +142,18 @@ const App = () => {
           console.log('updated person:', returnedPerson)
         })
         .catch(error => {
-          if (error.code === 'ERR_BAD_REQUEST') {
+          console.log(error)
+          if (error.response.status === 404) {
             setNotification(
-              `Update failed, ${newPerson.name} has been removed from the ` +
-                'server',
-              'error')
+              `Update failed, ${newPerson.name} has been removed from the `
+                + 'server',
+              'error'
+            )
             clearLists(newPerson.id)
           }
           else {
-            setNotification(error.message, 'error')
+            setNotification(error.response.data.error, 'error')
           }
-          console.log(error)
         })
   }
 
