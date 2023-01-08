@@ -1,30 +1,36 @@
-import { useState, useEffect } from 'react'
-import personService from './services/persons'
+import React, { useState, useEffect } from 'react';
+import personService from './services/persons';
 
 const Filter = ({ filterHandler }) => (
   <form>
     <div>
-      filter shown with: <input onChange={filterHandler} />
+      filter shown with:
+      {' '}
+      <input onChange={filterHandler} />
     </div>
   </form>
-)
+);
 
 const PersonForm = ({
-    submitHandler,
-    newNameState,
-    nameChangeHandler,
-    newNumberState,
-    numberChangeHandler
+  submitHandler,
+  newNameState,
+  nameChangeHandler,
+  newNumberState,
+  numberChangeHandler,
 }) => (
   <form onSubmit={submitHandler}>
     <div>
-      name: <input
+      name:
+      {' '}
+      <input
         value={newNameState}
         onChange={nameChangeHandler}
       />
     </div>
     <div>
-      number: <input
+      number:
+      {' '}
+      <input
         value={newNumberState}
         onChange={numberChangeHandler}
       />
@@ -33,201 +39,203 @@ const PersonForm = ({
       <button type="submit">add</button>
     </div>
   </form>
-)
+);
 
 const Person = ({ name, number, handleDelete }) => (
   <div>
-    {name} {number} <button onClick={handleDelete}>Delete</button>
+    {name}
+    {' '}
+    {number}
+    {' '}
+    <button type="button" onClick={handleDelete}>Delete</button>
   </div>
-)
+);
 
 const Notification = ({ message, type }) => {
   if (message === null) {
-    return null
+    return null;
   }
 
   return (
     <div className={type}>
       {message}
     </div>
-  )
-}
+  );
+};
 
 const App = () => {
-  const [persons, setPersons] = useState([])
-  const [newName, setNewName] = useState('')
-  const [newNumber, setNewNumber] = useState('')
-  const [personsToShow, setPersonsToShow] = useState([])
-  const [filterValue, setFilterValue] = useState('')
-  const [notificationMessage, setNotificationMessage] = useState(null)
-  const [notificationType, setNotificationType] = useState(null)
+  const [persons, setPersons] = useState([]);
+  const [newName, setNewName] = useState('');
+  const [newNumber, setNewNumber] = useState('');
+  const [personsToShow, setPersonsToShow] = useState([]);
+  const [filterValue, setFilterValue] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notificationType, setNotificationType] = useState(null);
 
-  useEffect (() => {
+  useEffect(() => {
     personService
       .getAll()
-      .then(initialPersons => {
-        setPersons(initialPersons)
-        setPersonsToShow(initialPersons)
-      })
-  }, [])
+      .then((initialPersons) => {
+        setPersons(initialPersons);
+        setPersonsToShow(initialPersons);
+      });
+  }, []);
   console.log(
-    'render', personsToShow.length,
-    'personsToShow:', personsToShow,
-    'all persons:', persons)
+    'render',
+    personsToShow.length,
+    'personsToShow:',
+    personsToShow,
+    'all persons:',
+    persons,
+  );
 
   const showIfVisible = (person) => {
     const show = person.name.toLowerCase().includes(
-      filterValue.toLowerCase()
-    )
+      filterValue.toLowerCase(),
+    );
     if (show) {
-      console.log(`person "${person.name}" is shown`)
-      setPersonsToShow(personsToShow.concat(person))
+      console.log(`person "${person.name}" is shown`);
+      setPersonsToShow(personsToShow.concat(person));
+    } else {
+      console.log(`person "${person.name}" is not shown`);
     }
-    else {
-      console.log(`person "${person.name}" is not shown`)
-    }
-  }
+  };
 
   const setNotification = (message, type) => {
-    setNotificationMessage(message)
-    setNotificationType(type)
+    setNotificationMessage(message);
+    setNotificationType(type);
     setTimeout(() => {
-      setNotificationMessage(null)
-      setNotificationType(null)
-    }, 5000)
-  }
+      setNotificationMessage(null);
+      setNotificationType(null);
+    }, 5000);
+  };
 
   const clearLists = (id) => {
-    setPersons(persons.filter(n => n.id !== id))
-    setPersonsToShow(personsToShow.filter(n => n.id !== id))
-  }
+    setPersons(persons.filter((n) => n.id !== id));
+    setPersonsToShow(personsToShow.filter((n) => n.id !== id));
+  };
 
   const createPerson = (newPerson) => {
     personService
-        .createPerson(newPerson)
-        .then(returnedPerson => {
-          setPersons(persons.concat(returnedPerson))
-          showIfVisible(returnedPerson)
-          setNewName('')
-          setNewNumber('')
-          setNotification(
-            `Added ${returnedPerson.name} to the phonebook`,
-            'success'
-          )
-          console.log('added new person:', returnedPerson)
-        })
-        .catch(error => {
-          setNotification(error.response.data.error, 'error')
-          console.log(error)
-        })
-  }
+      .createPerson(newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        showIfVisible(returnedPerson);
+        setNewName('');
+        setNewNumber('');
+        setNotification(
+          `Added ${returnedPerson.name} to the phonebook`,
+          'success',
+        );
+        console.log('added new person:', returnedPerson);
+      })
+      .catch((error) => {
+        setNotification(error.response.data.error, 'error');
+        console.log(error);
+      });
+  };
 
   const updatePerson = (newPerson) => {
-    console.log('updating person')
+    console.log('updating person');
     personService
-        .updatePerson(newPerson.id, newPerson)
-        .then(returnedPerson => {
-          setPersons(persons.map(person =>
-            person.id !== newPerson.id ? person : newPerson
-          ))
-          setPersonsToShow(persons.map(person =>
-            person.id !== newPerson.id ? person : newPerson
-          ))
-          setNewName('')
-          setNewNumber('')
+      .updatePerson(newPerson.id, newPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.map((person) => (
+          person.id !== newPerson.id ? person : newPerson
+        )));
+        setPersonsToShow(persons.map((person) => (
+          person.id !== newPerson.id ? person : newPerson
+        )));
+        setNewName('');
+        setNewNumber('');
+        setNotification(
+          `Updated number for ${returnedPerson.name}`,
+          'success',
+        );
+        console.log('updated person:', returnedPerson);
+      })
+      .catch((error) => {
+        console.log(error);
+        if (error.response.status === 404) {
           setNotification(
-            `Updated number for ${returnedPerson.name}`,
-            'success'
-          )
-          console.log('updated person:', returnedPerson)
-        })
-        .catch(error => {
-          console.log(error)
-          if (error.response.status === 404) {
-            setNotification(
-              `Update failed, ${newPerson.name} has been removed from the `
-                + 'server',
-              'error'
-            )
-            clearLists(newPerson.id)
-          }
-          else {
-            setNotification(error.response.data.error, 'error')
-          }
-        })
-  }
+            `Update failed, ${newPerson.name} has been removed from the `
+              + 'server',
+            'error',
+          );
+          clearLists(newPerson.id);
+        } else {
+          setNotification(error.response.data.error, 'error');
+        }
+      });
+  };
 
   const addPerson = (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    const found = persons.find(person =>
-      person.name === newName
-    )
+    const found = persons.find((person) => person.name === newName);
     if (found) {
       if (window.confirm(
-        `${newName} is already in the phonebook, ` +
-          'replace the old number with a new one?'
+        `${newName} is already in the phonebook, `
+          + 'replace the old number with a new one?',
       )) {
         updatePerson({
           ...found,
-          number: newNumber
-        })
+          number: newNumber,
+        });
       }
-    }
-    else {
+    } else {
       createPerson({
         name: newName,
-        number: newNumber
-      })
+        number: newNumber,
+      });
     }
-  }
+  };
 
   const handleNameChange = (event) => {
-    setNewName(event.target.value)
-  }
+    setNewName(event.target.value);
+  };
 
   const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-  }
+    setNewNumber(event.target.value);
+  };
 
   const handleFilterChange = (event) => {
-    setFilterValue(event.target.value)
-    setPersonsToShow(persons.filter(person =>
+    setFilterValue(event.target.value);
+    setPersonsToShow(persons.filter((person) => (
       person.name.toLowerCase().includes(
-        event.target.value.toLowerCase()
-    )))
-  }
+        event.target.value.toLowerCase(),
+      )
+    )));
+  };
 
   const handleDeleteOf = (id) => {
-    const person = persons.find(person =>
-      person.id === id
-    )
+    const person = persons.find((p) => p.id === id);
 
     if (window.confirm(`Delete ${person.name}?`)) {
       personService
         .deletePerson(id)
-        .then(returnedId => {
-          clearLists(returnedId)
+        .then((returnedId) => {
+          clearLists(returnedId);
           setNotification(
             `Removed ${person.name} from the phonebook`,
-            'success'
-          )
+            'success',
+          );
         })
-        .catch(error => {
+        .catch((error) => {
           if (error.code === 'ERR_BAD_REQUEST') {
             setNotification(
-              `Delete failed, ${person.name} has already been removed from ` +
-                'the server',
-              'error')
-            clearLists(id)
+              `Delete failed, ${person.name} has already been removed from `
+                + 'the server',
+              'error',
+            );
+            clearLists(id);
+          } else {
+            setNotification(error.message, 'error');
           }
-          else {
-            setNotification(error.message, 'error')
-          }
-          console.log(error)
-        })
+          console.log(error);
+        });
     }
-  }
+  };
 
   return (
     <div>
@@ -250,19 +258,16 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-        {personsToShow.map(person => {
-          return (
-            <Person
-              key={person.id}
-              name={person.name}
-              number={person.number}
-              handleDelete={() => handleDeleteOf(person.id)}
-            />
-          )
-        })}
+      {personsToShow.map((person) => (
+        <Person
+          key={person.id}
+          name={person.name}
+          number={person.number}
+          handleDelete={() => handleDeleteOf(person.id)}
+        />
+      ))}
     </div>
-  )
+  );
+};
 
-}
-
-export default App
+export default App;
