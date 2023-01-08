@@ -1,0 +1,23 @@
+@url = http://localhost:3003/api/blogs
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Ojasta allikkoon",
+    "author": "Aku Ankka",
+    "url": "http://www.ankanpulinat.pom",
+    "likes": "5"
+}
+
+###
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "title": "Neliapilasta kultalusikkaan",
+    "author": "Hannu Hanhi",
+    "url": "http://www.onnenpoika.pom",
+    "likes": "27"
+}
