@@ -19,12 +19,12 @@ const favoriteBlog = (blogs) => {
   return { title, author, likes };
 };
 
-const mostBlogs = (blogList) => {
-  if (blogList.length === 0) {
+const mostBlogs = (blogArray) => {
+  if (blogArray.length === 0) {
     return undefined;
   }
 
-  const [author, blogs] = _(blogList)
+  const [author, blogs] = _(blogArray)
     .countBy((blog) => blog.author)
     .toPairs()
     .maxBy(1);
@@ -32,9 +32,28 @@ const mostBlogs = (blogList) => {
   return { author, blogs };
 };
 
+const mostLikes = (blogArray) => {
+  if (blogArray.length === 0) {
+    return undefined;
+  }
+
+  const likeArray = blogArray.reduce(
+    (accu, blog) => {
+      accu[blog.author] = accu[blog.author] || 0;
+      accu[blog.author] += blog.likes;
+      return accu;
+    },
+    {},
+  );
+
+  const [author, likes] = _(likeArray).toPairs().maxBy(1);
+  return { author, likes };
+};
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes,
 };

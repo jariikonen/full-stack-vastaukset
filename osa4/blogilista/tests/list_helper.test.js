@@ -131,3 +131,26 @@ describe('most blogs', () => {
     });
   });
 });
+
+describe('most likes', () => {
+  test('of empty list is undefined', () => {
+    const result = listHelper.mostLikes(emptyList);
+    expect(result).toEqual(undefined);
+  });
+
+  test('when list has only one blog equals that', () => {
+    const result = listHelper.mostLikes(listWithOneBlog);
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 5,
+    });
+  });
+
+  test('of longer list is decided correctly', () => {
+    const result = listHelper.mostLikes(longerList);
+    expect(result).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17,
+    });
+  });
+});

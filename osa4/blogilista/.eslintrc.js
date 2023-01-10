@@ -14,5 +14,12 @@ module.exports = {
   rules: {
     'no-console': 0,
     'no-unused-vars': ['error', { args: 'none' }],
+    'no-param-reassign': [
+      'error',
+      {
+        props: true,
+        ignorePropertyModificationsFor: ['accu'],
+      },
+    ],
   },
 };
