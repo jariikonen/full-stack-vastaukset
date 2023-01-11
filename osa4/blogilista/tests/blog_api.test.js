@@ -49,8 +49,24 @@ test('when "likes" field is not given a value, it receives value of 0', async ()
     .expect('Content-Type', /application\/json/);
 
   const blogsAtEnd = await helper.blogsInDb();
-  const newBlogFromDb = blogsAtEnd.filter((b) => b.title === 'First class tests')[0];
+  const newBlogFromDb = blogsAtEnd.filter((b) => b.title === helper.blogWithoutLikesField.title)[0];
   expect(newBlogFromDb.likes).toEqual(0);
+});
+
+test('posted blog without a title field returns status "400 Bad Request"', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.blogWithoutTitleField)
+    .expect(400)
+    .expect('Content-Type', /application\/json/);
+});
+
+test('posted blog without a url field returns status "400 Bad Request"', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.blogWithoutUrlField)
+    .expect(400)
+    .expect('Content-Type', /application\/json/);
 });
 
 afterAll(() => {
