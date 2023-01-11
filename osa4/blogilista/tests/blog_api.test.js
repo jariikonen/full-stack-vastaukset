@@ -27,6 +27,20 @@ test('name of the id field is "id" (not "_id")', async () => {
   expect(response.body[0]._id).not.toBeDefined();
 });
 
+test('new blogs can be added', async () => {
+  await api
+    .post('/api/blogs')
+    .send(helper.blogArray[2])
+    .expect(201)
+    .expect('Content-Type', /application\/json/);
+
+  const blogsAtEnd = await helper.blogsInDb();
+  expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1);
+
+  const contents = blogsAtEnd.map((b) => b.title);
+  expect(contents).toContain('Canonical string reduction');
+});
+
 afterAll(() => {
   mongoose.connection.close();
 });
