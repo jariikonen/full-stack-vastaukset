@@ -41,21 +41,15 @@ test('a valid blog can be added', async () => {
   expect(blogTitles).toContain('Canonical string reduction');
 });
 
-test('when likes field is not given a value it receives value of 0', async () => {
-  const newBlog = {
-    title: 'Ojasta allikkoon',
-    author: 'Aku Ankka',
-    url: 'http://www.ankanpulinat.pom',
-  };
-
+test('when "likes" field is not given a value, it receives value of 0', async () => {
   await api
     .post('/api/blogs')
-    .send(newBlog)
+    .send(helper.blogWithoutLikesField)
     .expect(201)
     .expect('Content-Type', /application\/json/);
 
   const blogsAtEnd = await helper.blogsInDb();
-  const newBlogFromDb = blogsAtEnd.filter((b) => b.title === 'Ojasta allikkoon')[0];
+  const newBlogFromDb = blogsAtEnd.filter((b) => b.title === 'First class tests')[0];
   expect(newBlogFromDb.likes).toEqual(0);
 });
 

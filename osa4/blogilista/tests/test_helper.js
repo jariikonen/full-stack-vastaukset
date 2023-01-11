@@ -39,6 +39,21 @@ const blogArray = [
   },
 ];
 const initialBlogs = blogArray.slice(0, 2);
+const blogWithoutLikesField = {
+  title: 'First class tests',
+  author: 'Robert C. Martin',
+  url: 'http://blog.cleancoder.com/uncle-bob/2017/05/05/TestDefinitions.htmll',
+};
+const blogWithoutTitleField = {
+  author: 'Robert C. Martin',
+  url: 'http://blog.cleancoder.com/uncle-bob/2017/03/03/TDD-Harms-Architecture.html',
+  likes: 0,
+};
+const blogWithoutUrlField = {
+  title: 'Type wars',
+  author: 'Robert C. Martin',
+  likes: 2,
+};
 
 const blogsInDb = async () => {
   const blogs = await Blog.find({});
@@ -48,5 +63,8 @@ const blogsInDb = async () => {
 module.exports = {
   blogArray,
   initialBlogs,
+  blogWithoutLikesField,
+  blogWithoutTitleField,
+  blogWithoutUrlField,
   blogsInDb,
 };
