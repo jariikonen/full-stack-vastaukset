@@ -83,6 +83,8 @@ describe('when there are initially some blogs saved', () => {
         .expect(204);
 
       const blogsAtEnd = await helper.blogsInDb();
+      expect(blogsAtEnd.length).toBe(blogsAtStart.length - 1);
+
       const blogTitles = blogsAtEnd.map((b) => b.title);
       expect(blogTitles).not.toContain(blogToDelete.title);
     });
