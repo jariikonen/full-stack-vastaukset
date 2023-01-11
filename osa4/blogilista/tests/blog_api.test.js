@@ -103,6 +103,47 @@ describe('when there are initially some blogs saved', () => {
         .expect(400);
     });
   });
+
+  describe('update of a blog', () => {
+    test('succeeds with statuscode 200 with valid id and blog data', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      blogToUpdate.likes += 1;
+
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send(blogToUpdate)
+        .expect(200);
+
+      const blogsAtEnd = await helper.blogsInDb();
+      expect(blogsAtEnd.length).toBe(helper.initialBlogs.length);
+
+      const updatedBlog = blogsAtEnd[0];
+      expect(updatedBlog.likes).toBe(blogToUpdate.likes);
+    });
+
+    test('fails with statuscode 404 if blog with the id is not found', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      const invalidBlogId = await helper.nonExistingId();
+
+      await api
+        .put(`/api/blogs/${invalidBlogId}`)
+        .send(blogToUpdate)
+        .expect(404);
+    });
+
+    test('fails with status code 400 if id is malformed', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToUpdate = blogsAtStart[0];
+      const malformedId = '3';
+
+      await api
+        .put(`/api/blogs/${malformedId}`)
+        .send(blogToUpdate)
+        .expect(400);
+    });
+  });
 });
 
 afterAll(() => {

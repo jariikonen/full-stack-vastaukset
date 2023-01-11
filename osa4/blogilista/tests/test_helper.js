@@ -61,7 +61,11 @@ const blogsInDb = async () => {
 };
 
 const nonExistingId = async () => {
-  const blog = new Blog({ title: 'willremovethissoon', url: 'http://blog.org' });
+  const blog = new Blog({
+    title: 'thisisgoingtoberemoved',
+    author: 'author',
+    url: 'http://blog.org',
+  });
   await blog.save();
   await blog.remove();
 
