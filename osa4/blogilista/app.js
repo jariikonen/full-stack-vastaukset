@@ -37,6 +37,7 @@ morgan.token('data', (request, response) => {
 
 app.use(morgan(
   ':method :url :status :res[content-length] - :response-time ms :data',
+  { skip: (req, res) => process.env.NODE_ENV === 'test' },
 ));
 
 app.use('/api/blogs', blogsRouter);
