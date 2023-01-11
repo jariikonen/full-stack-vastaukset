@@ -19,7 +19,7 @@ test('right amount of blogs are returned as json', async () => {
   expect(response.body).toHaveLength(2);
 });
 
-test('name of the id field is "id"', async () => {
+test('name of the id field is "id" (not "_id")', async () => {
   const response = await api.get('/api/blogs');
 
   expect(response.body[0].id).toBeDefined();
