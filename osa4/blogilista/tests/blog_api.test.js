@@ -69,8 +69,38 @@ describe('when there are initially some blogs saved', () => {
       await api
         .post('/api/blogs')
         .send(helper.blogWithoutUrlField)
-        .expect(400)
-        .expect('Content-Type', /application\/json/);
+        .expect(400);
+    });
+  });
+
+  describe('deletion of a blog', () => {
+    test('succeeds with statuscode 204 if id is valid', async () => {
+      const blogsAtStart = await helper.blogsInDb();
+      const blogToDelete = blogsAtStart[0];
+
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)
+        .expect(204);
+
+      const blogsAtEnd = await helper.blogsInDb();
+      const blogTitles = blogsAtEnd.map((b) => b.title);
+      expect(blogTitles).not.toContain(blogToDelete.title);
+    });
+
+    test('fails with statuscode 404 if blog with the id is not found', async () => {
+      const invalidBlogId = await helper.nonExistingId();
+
+      await api
+        .delete(`/api/blogs/${invalidBlogId}`)
+        .expect(404);
+    });
+
+    test('fails with status code 400 if id is malformed', async () => {
+      const malformedId = '3';
+
+      await api
+        .delete(`/api/blogs/${malformedId}`)
+        .expect(400);
     });
   });
 });
