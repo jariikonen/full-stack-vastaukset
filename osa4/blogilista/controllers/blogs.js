@@ -23,9 +23,8 @@ blogsRouter.delete('/:id', async (request, response) => {
 });
 
 blogsRouter.put('/:id', async (request, response) => {
-  // eslint-disable-next-line object-curly-newline
+  /* eslint-disable object-curly-newline */
   const { title, author, url, likes } = request.body;
-  // eslint-disable-next-line object-curly-newline
   const blog = { title, author, url, likes };
 
   const updatedBlog = await Blog.findByIdAndUpdate(
