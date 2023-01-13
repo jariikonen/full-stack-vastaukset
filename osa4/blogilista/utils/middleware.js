@@ -21,7 +21,19 @@ const errorHandler = (error, request, response, next) => {
   next(error);
 };
 
+// eslint-disable-next-line consistent-return
+const tokenExtractor = (request, response, next) => {
+  const authorization = request.get('authorization');
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    // eslint-disable-next-line no-param-reassign
+    request.token = authorization.substring(7);
+  }
+
+  next();
+};
+
 module.exports = {
   unknownEndpoint,
   errorHandler,
+  tokenExtractor,
 };

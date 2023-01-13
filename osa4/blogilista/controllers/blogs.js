@@ -10,17 +10,10 @@ blogsRouter.get('/', async (request, response) => {
   response.json(blogs);
 });
 
-const getTokenFrom = (request) => {
-  const authorization = request.get('authorization');
-  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-    return authorization.substring(7);
-  }
-  return null;
-};
-
 // eslint-disable-next-line consistent-return
 blogsRouter.post('/', async (request, response) => {
-  const token = getTokenFrom(request);
+  const { token, body } = request;
+  console.log(token);
   const decodedToken = jwt.verify(token, process.env.SECRET);
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' });
@@ -28,10 +21,10 @@ blogsRouter.post('/', async (request, response) => {
   const user = await User.findById(decodedToken.id);
 
   const newBlog = {
-    title: request.body.title,
-    author: request.body.author,
-    url: request.body.url,
-    likes: request.body.likes,
+    title: body.title,
+    author: body.author,
+    url: body.url,
+    likes: body.likes,
     user: user._id,
   };
   const blog = new Blog(newBlog);
