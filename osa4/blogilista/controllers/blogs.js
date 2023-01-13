@@ -13,7 +13,6 @@ blogsRouter.get('/', async (request, response) => {
 // eslint-disable-next-line consistent-return
 blogsRouter.post('/', async (request, response) => {
   const { token, body } = request;
-  console.log(token);
   const decodedToken = jwt.verify(token, process.env.SECRET);
   if (!token || !decodedToken.id) {
     return response.status(401).json({ error: 'token missing or invalid' });
@@ -36,12 +35,27 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(savedBlog);
 });
 
+// eslint-disable-next-line consistent-return
 blogsRouter.delete('/:id', async (request, response) => {
-  const result = await Blog.findByIdAndRemove(request.params.id);
-  if (result) {
+  const { token, params } = request;
+  let decodedToken = null;
+  if (token) {
+    decodedToken = jwt.verify(token, process.env.SECRET);
+  }
+  if (!token || !decodedToken.id) {
+    return response.status(401).json({ error: 'token missing or invalid' });
+  }
+  const user = await User.findById(decodedToken.id);
+
+  const blogToDelete = await Blog.findById(params.id);
+  if (!blogToDelete) {
+    return response.status(404).send({ error: 'resource not found' });
+  }
+  if (blogToDelete.user.toString() === user._id.toString()) {
+    await blogToDelete.remove();
     response.status(204).end();
   } else {
-    response.status(404).send({ error: 'resource not found' });
+    response.status(401).json({ error: 'unauthorized' });
   }
 });
 
