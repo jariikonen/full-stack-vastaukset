@@ -24,7 +24,6 @@ describe('when there are initially some blogs saved', () => {
     const response = await api.get('/api/blogs');
 
     expect(response.body[0].id).toBeDefined();
-    // eslint-disable-next-line no-underscore-dangle
     expect(response.body[0]._id).not.toBeDefined();
   });
 

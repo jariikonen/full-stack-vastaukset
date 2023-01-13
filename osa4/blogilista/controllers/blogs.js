@@ -16,12 +16,12 @@ blogsRouter.post('/', async (request, response) => {
     author: request.body.author,
     url: request.body.url,
     likes: request.body.likes,
-    user: users[0].id,
+    user: users[0]._id,
   };
   const blog = new Blog(newBlog);
   const savedBlog = await blog.save();
 
-  users[0].blogs = users[0].blogs.concat(savedBlog.id);
+  users[0].blogs = users[0].blogs.concat(savedBlog._id);
   await users[0].save();
 
   response.status(201).json(savedBlog);
@@ -37,7 +37,6 @@ blogsRouter.delete('/:id', async (request, response) => {
 });
 
 blogsRouter.put('/:id', async (request, response) => {
-  /* eslint-disable object-curly-newline */
   const { title, author, url, likes } = request.body;
   const blog = { title, author, url, likes };
 
