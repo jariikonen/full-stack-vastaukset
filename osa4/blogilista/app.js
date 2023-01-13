@@ -12,6 +12,7 @@ const {
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
+  userExtractor,
 } = require('./utils/middleware');
 
 const app = express();
@@ -44,7 +45,7 @@ app.use(morgan(
 ));
 
 app.use('/api/login', loginRouter);
-app.use('/api/blogs', tokenExtractor, blogsRouter);
+app.use('/api/blogs', tokenExtractor, userExtractor, blogsRouter);
 app.use('/api/users', userRouter);
 
 app.use(unknownEndpoint);

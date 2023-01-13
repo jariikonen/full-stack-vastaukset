@@ -1,4 +1,6 @@
+const jwt = require('jsonwebtoken');
 const logger = require('./logger');
+const User = require('../models/user');
 
 const unknownEndpoint = (request, response) => {
   response.status(404).send({ error: 'unknown endpoint' });
@@ -32,8 +34,27 @@ const tokenExtractor = (request, response, next) => {
   next();
 };
 
+const userExtractor = async (request, response, next) => {
+  const { token } = request;
+
+  let decodedToken = null;
+  if (token) {
+    decodedToken = jwt.verify(token, process.env.SECRET);
+  }
+
+  let user = null;
+  if (decodedToken && decodedToken.id) {
+    user = await User.findById(decodedToken.id);
+    // eslint-disable-next-line no-param-reassign
+    request.user = user;
+  }
+
+  next();
+};
+
 module.exports = {
   unknownEndpoint,
   errorHandler,
   tokenExtractor,
+  userExtractor,
 };

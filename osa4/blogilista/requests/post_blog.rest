@@ -1,8 +1,9 @@
 @url = http://localhost:3003/api/blogs
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE4YmI4NTBjOWI4MTA0Nzg2MWE5NCIsImlhdCI6MTY3MzYyODYyOSwiZXhwIjoxNjczNjMyMjI5fQ.lLfjhfZu6uHQNHGdAs2d0tmoV8pDwcaxulXZKfQrpbQ
 
 POST {{url}} HTTP/1.1
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE1MzE5OGE1MjE1Y2RlMGJlYjUwNSIsImlhdCI6MTY3MzYyMTIxMiwiZXhwIjoxNjczNjI0ODEyfQ.XKmZKSoCZgN8XOJKKKBvriOMXzCio6M10QGnNdsQEns
+Authorization: bearer {{token}}
 
 {
     "title": "Ojasta allikkoon",
@@ -15,7 +16,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa
 
 POST {{url}} HTTP/1.1
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE1MzE5OGE1MjE1Y2RlMGJlYjUwNSIsImlhdCI6MTY3MzYyMTIxMiwiZXhwIjoxNjczNjI0ODEyfQ.XKmZKSoCZgN8XOJKKKBvriOMXzCio6M10QGnNdsQE
+Authorization: bearer {{token}}
 
 {
     "title": "Neliapilasta kultalusikkaan",
@@ -28,6 +29,7 @@ Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa
 
 POST {{url}} HTTP/1.1
 Content-Type: application/json
+Authorization: bearer {{token}}
 
 {
     "title": "Raha ei kasva puissa",

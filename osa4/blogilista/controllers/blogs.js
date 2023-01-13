@@ -1,7 +1,5 @@
 const blogsRouter = require('express').Router();
-const jwt = require('jsonwebtoken');
 const Blog = require('../models/blog');
-const User = require('../models/user');
 
 blogsRouter.get('/', async (request, response) => {
   const blogs = await Blog
@@ -12,12 +10,10 @@ blogsRouter.get('/', async (request, response) => {
 
 // eslint-disable-next-line consistent-return
 blogsRouter.post('/', async (request, response) => {
-  const { token, body } = request;
-  const decodedToken = jwt.verify(token, process.env.SECRET);
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' });
+  const { user, body } = request;
+  if (!user) {
+    return response.status(401).json({ error: 'not logged in' });
   }
-  const user = await User.findById(decodedToken.id);
 
   const newBlog = {
     title: body.title,
@@ -37,22 +33,21 @@ blogsRouter.post('/', async (request, response) => {
 
 // eslint-disable-next-line consistent-return
 blogsRouter.delete('/:id', async (request, response) => {
-  const { token, params } = request;
-  let decodedToken = null;
-  if (token) {
-    decodedToken = jwt.verify(token, process.env.SECRET);
+  const { user, params } = request;
+
+  if (!user) {
+    return response.status(401).json({ error: 'not logged in' });
   }
-  if (!token || !decodedToken.id) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
-  const user = await User.findById(decodedToken.id);
 
   const blogToDelete = await Blog.findById(params.id);
   if (!blogToDelete) {
     return response.status(404).send({ error: 'resource not found' });
   }
+
   if (blogToDelete.user.toString() === user._id.toString()) {
     await blogToDelete.remove();
+    user.blogs = user.blogs.filter((blogId) => blogId.toString() !== blogToDelete._id.toString());
+    await user.save();
     response.status(204).end();
   } else {
     response.status(401).json({ error: 'unauthorized' });
