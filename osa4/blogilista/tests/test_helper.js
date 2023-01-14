@@ -1,5 +1,11 @@
+const bcrypt = require('bcrypt');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const supertest = require('supertest');
+const app = require('../app');
 const Blog = require('../models/blog');
 const User = require('../models/user');
+
+const api = supertest(app);
 
 const blogArray = [
   {
@@ -78,6 +84,39 @@ const nonExistingId = async () => {
   return blog.id.toString();
 };
 
+const createUser = async (username) => {
+  const passwordHash = await bcrypt.hash(username, 10);
+  const user = new User({
+    username,
+    name: username,
+    passwordHash,
+  });
+  await user.save();
+};
+
+const loginAs = async (username) => {
+  const user = { username, password: username };
+  const result = await api
+    .post('/api/login')
+    .send(user)
+    .expect(200)
+    .expect('Content-Type', /application\/json/);
+
+  return result.body.token;
+};
+
+const insertInitialBlogsAs = async (username) => {
+  const user = await User.findOne({ username });
+
+  const blogObjects = initialBlogs.map((blog) => {
+    const blogObject = new Blog(blog);
+    blogObject.user = user._id;
+    return blogObject;
+  });
+  const promiseArray = blogObjects.map((bo) => bo.save());
+  await Promise.all(promiseArray);
+};
+
 module.exports = {
   blogArray,
   initialBlogs,
@@ -87,4 +126,7 @@ module.exports = {
   blogsInDb,
   usersInDb,
   nonExistingId,
+  createUser,
+  loginAs,
+  insertInitialBlogsAs,
 };

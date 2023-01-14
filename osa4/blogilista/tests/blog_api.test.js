@@ -2,14 +2,19 @@ const mongoose = require('mongoose');
 const supertest = require('supertest');
 const app = require('../app');
 const Blog = require('../models/blog');
+const User = require('../models/user');
 const helper = require('./test_helper');
 
 const api = supertest(app);
 
 describe('when there are initially some blogs saved', () => {
   beforeEach(async () => {
+    await User.deleteMany({});
+    await helper.createUser('testi1');
+    await helper.createUser('testi2');
+
     await Blog.deleteMany({});
-    await Blog.insertMany(helper.initialBlogs);
+    await helper.insertInitialBlogsAs('testi1');
   });
 
   test('right amount of blogs are returned as json', async () => {
@@ -28,9 +33,23 @@ describe('when there are initially some blogs saved', () => {
   });
 
   describe('adding a blog', () => {
+    test(
+      'adding a valid blog fails with statuscode 401 if there is no authorization token in the request',
+      async () => {
+        await api
+          .post('/api/blogs')
+          .send(helper.blogArray[2])
+          .expect(401)
+          .expect('Content-Type', /application\/json/);
+      },
+    );
+
     test('a valid blog can be added', async () => {
+      const token = await helper.loginAs('testi1');
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(helper.blogArray[2])
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -43,8 +62,11 @@ describe('when there are initially some blogs saved', () => {
     });
 
     test('when "likes" field is not given a value, it receives value of 0', async () => {
+      const token = await helper.loginAs('testi1');
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(helper.blogWithoutLikesField)
         .expect(201)
         .expect('Content-Type', /application\/json/);
@@ -57,28 +79,38 @@ describe('when there are initially some blogs saved', () => {
     });
 
     test('posting a blog without a title fails with statuscode 400', async () => {
+      const token = await helper.loginAs('testi1');
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(helper.blogWithoutTitleField)
         .expect(400)
         .expect('Content-Type', /application\/json/);
     });
 
     test('posting a blog without a url fails with statuscode 400', async () => {
+      const token = await helper.loginAs('testi1');
+
       await api
         .post('/api/blogs')
+        .set('Authorization', `bearer ${token}`)
         .send(helper.blogWithoutUrlField)
-        .expect(400);
+        .expect(400)
+        .expect('Content-Type', /application\/json/);
     });
   });
 
   describe('deletion of a blog', () => {
     test('succeeds with statuscode 204 if id is valid', async () => {
+      const token = await helper.loginAs('testi1');
+
       const blogsAtStart = await helper.blogsInDb();
       const blogToDelete = blogsAtStart[0];
 
       await api
         .delete(`/api/blogs/${blogToDelete.id}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(204);
 
       const blogsAtEnd = await helper.blogsInDb();
@@ -89,18 +121,24 @@ describe('when there are initially some blogs saved', () => {
     });
 
     test('fails with statuscode 404 if blog with the id is not found', async () => {
+      const token = await helper.loginAs('testi1');
+
       const invalidBlogId = await helper.nonExistingId();
 
       await api
         .delete(`/api/blogs/${invalidBlogId}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(404);
     });
 
     test('fails with status code 400 if id is malformed', async () => {
+      const token = await helper.loginAs('testi1');
+
       const malformedId = '3';
 
       await api
         .delete(`/api/blogs/${malformedId}`)
+        .set('Authorization', `bearer ${token}`)
         .expect(400);
     });
   });
