@@ -1,5 +1,5 @@
 @url = http://localhost:3003/api/blogs
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE4YmI4NTBjOWI4MTA0Nzg2MWE5NCIsImlhdCI6MTY3MzYyODYyOSwiZXhwIjoxNjczNjMyMjI5fQ.lLfjhfZu6uHQNHGdAs2d0tmoV8pDwcaxulXZKfQrpbQ
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE4YmI4NTBjOWI4MTA0Nzg2MWE5NCIsImlhdCI6MTY3Mzc1NzQ0NCwiZXhwIjoxNjczNzYxMDQ0fQ.O7b4hcZBepWRx5Obaub_1fOIPaBTX53139HXInYAUeQ
 
 POST {{url}} HTTP/1.1
 Content-Type: application/json
