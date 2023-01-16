@@ -16,6 +16,14 @@ const App = () => {
     blogService.getAll().then((b) => setBlogs(b));
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
+    if (loggedUserJSON) {
+      const usr = JSON.parse(loggedUserJSON);
+      setUser(usr);
+    }
+  }, []);
+
   const handleLogin = async (event) => {
     event.preventDefault();
     console.log('logging in with', username, password, '...');
@@ -23,12 +31,21 @@ const App = () => {
     try {
       const usr = await loginService.login({ username, password });
       console.log('login succeeded', usr);
+
+      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(usr));
+
       setUser(usr);
       setUsername('');
       setPassword('');
     } catch (exception) {
       console.log('login failed:', exception);
     }
+  };
+
+  const handleLogout = async () => {
+    console.log(`logging out user '${user.name}' ...`);
+    window.localStorage.removeItem('loggedBloglistUser');
+    window.location.reload();
   };
 
   const handleUsernameChange = ({ target }) => setUsername(target.value);
@@ -53,6 +70,8 @@ const App = () => {
               logged in as
               {' '}
               {user.name}
+              {' '}
+              <button type="button" onClick={handleLogout}>logout</button>
             </p>
 
             <BlogList blogs={blogs} />
