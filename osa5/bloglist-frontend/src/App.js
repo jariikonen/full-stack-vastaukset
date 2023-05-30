@@ -5,12 +5,16 @@ import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
+import CreateBlogForm from './components/CreateBlogForm';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
+  const [title, setTitle] = useState('');
+  const [author, setAuthor] = useState('');
+  const [url, setUrl] = useState('');
 
   useEffect(() => {
     blogService.getAll().then((b) => setBlogs(b));
@@ -51,9 +55,26 @@ const App = () => {
   const handleUsernameChange = ({ target }) => setUsername(target.value);
   const handlePasswordChange = ({ target }) => setPassword(target.value);
 
+  const handleTitleChange = ({ target }) => setTitle(target.value);
+  const handleAuthorChange = ({ target }) => setAuthor(target.value);
+  const handleUrlChange = ({ target }) => setUrl(target.value);
+
+  const handleCreateBlog = async (event) => {
+    event.preventDefault();
+    console.log(`creating a new blog: (title) ${title}, (author) ${author}, (url) ${url}`);
+
+    blogService.setToken(user.token);
+    const newBlog = await blogService.createBlog({ title, author, url });
+    console.log('posting of a new blog succeeded', newBlog);
+    setTitle('');
+    setAuthor('');
+    setUrl('');
+    setBlogs(blogs.concat(newBlog));
+  };
+
   return (
     <div>
-      {user === null
+      {!user
         ? (
           <LoginForm
             handleLogin={handleLogin}
@@ -74,6 +95,15 @@ const App = () => {
               <button type="button" onClick={handleLogout}>logout</button>
             </p>
 
+            <CreateBlogForm
+              title={title}
+              author={author}
+              url={url}
+              handleTitleChange={handleTitleChange}
+              handleAuthorChange={handleAuthorChange}
+              handleUrlChange={handleUrlChange}
+              handleCreate={handleCreateBlog}
+            />
             <BlogList blogs={blogs} />
           </div>
         )}
