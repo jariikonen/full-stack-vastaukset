@@ -6,6 +6,7 @@ import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
 import CreateBlogForm from './components/CreateBlogForm';
+import Notification from './components/Notification';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,6 +16,8 @@ const App = () => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notificationType, setNotificationType] = useState(null);
 
   useEffect(() => {
     blogService.getAll().then((b) => setBlogs(b));
@@ -27,6 +30,15 @@ const App = () => {
       setUser(usr);
     }
   }, []);
+
+  const setNotification = (message, type) => {
+    setNotificationMessage(message);
+    setNotificationType(type);
+    setTimeout(() => {
+      setNotificationMessage(null);
+      setNotificationType(null);
+    }, 5000);
+  };
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -42,6 +54,10 @@ const App = () => {
       setUsername('');
       setPassword('');
     } catch (exception) {
+      setNotification(
+        'wrong username or password (or both)',
+        'error',
+      );
       console.log('login failed:', exception);
     }
   };
@@ -70,23 +86,38 @@ const App = () => {
     setAuthor('');
     setUrl('');
     setBlogs(blogs.concat(newBlog));
+    setNotification(
+      `a new blog ${newBlog.title} added`,
+      'success',
+    );
   };
 
   return (
     <div>
       {!user
         ? (
-          <LoginForm
-            handleLogin={handleLogin}
-            username={username}
-            handleUsernameChange={handleUsernameChange}
-            password={password}
-            handlePasswordChange={handlePasswordChange}
-          />
+          <div>
+            <h2>log in to application</h2>
+            <Notification
+              message={notificationMessage}
+              type={notificationType}
+            />
+            <LoginForm
+              handleLogin={handleLogin}
+              username={username}
+              handleUsernameChange={handleUsernameChange}
+              password={password}
+              handlePasswordChange={handlePasswordChange}
+            />
+          </div>
         )
         : (
           <div>
             <h2>blogs</h2>
+            <Notification
+              message={notificationMessage}
+              type={notificationType}
+            />
             <p>
               logged in as
               {' '}
