@@ -3,11 +3,19 @@
 /* eslint-disable react/function-component-definition */
 import { React, useState } from 'react';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog }) => {
   const [condensed, setCondensed] = useState(true);
 
   const toggleSize = () => {
     setCondensed(!condensed);
+  };
+
+  const handleLike = () => {
+    likeBlog({
+      ...blog,
+      user: blog.user.id,
+      likes: blog.likes + 1,
+    });
   };
 
   const blogStyle = {
@@ -47,7 +55,7 @@ const Blog = ({ blog }) => {
         {' '}
         {blog.likes}
         {' '}
-        <button type="button" onClick={() => console.log('like button clicked')}>like</button>
+        <button type="button" onClick={handleLike}>like</button>
       </div>
       <div>{blog.user.name}</div>
     </div>

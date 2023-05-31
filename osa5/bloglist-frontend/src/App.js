@@ -92,6 +92,19 @@ const App = () => {
     blogFormRef.current.toggleVisibility();
   };
 
+  const likeBlog = async (blogObject) => {
+    console.log('liking blog', blogObject);
+
+    blogService.setToken(user.token);
+    const returnedBlog = await blogService.updateBlog(blogObject);
+
+    console.log('liking blog succeeded', returnedBlog);
+
+    setBlogs(blogs.map((blog) => (
+      blog.id !== returnedBlog.id ? blog : returnedBlog
+    )));
+  };
+
   return (
     <div>
       {!user
@@ -129,7 +142,7 @@ const App = () => {
             <Togglable buttonLabel="create blog" ref={blogFormRef}>
               <CreateBlogForm createBlog={createBlog} />
             </Togglable>
-            <BlogList blogs={blogs} />
+            <BlogList blogs={blogs} likeBlog={likeBlog} />
           </div>
         )}
     </div>

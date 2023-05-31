@@ -55,8 +55,14 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 });
 
+// eslint-disable-next-line consistent-return
 blogsRouter.put('/:id', async (request, response) => {
-  const { title, author, url, likes } = request.body;
+  const { user, body } = request;
+  if (!user) {
+    return response.status(401).json({ error: 'not logged in' });
+  }
+
+  const { title, author, url, likes } = body;
   const blog = { title, author, url, likes };
 
   const updatedBlog = await Blog.findByIdAndUpdate(
@@ -66,6 +72,7 @@ blogsRouter.put('/:id', async (request, response) => {
   );
 
   if (updatedBlog) {
+    await updatedBlog.populate('user', { username: 1, name: 1, id: 1 });
     response.json(updatedBlog);
   } else {
     response.status(404).send({ error: 'resource not found' });
