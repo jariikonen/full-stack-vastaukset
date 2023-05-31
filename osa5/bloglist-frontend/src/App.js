@@ -25,7 +25,12 @@ const App = () => {
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService.getAll().then((b) => setBlogs(b));
+    const loadBlogs = async () => {
+      const receivedBlogs = await blogService.getAll();
+      receivedBlogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(receivedBlogs);
+    };
+    loadBlogs();
   }, []);
 
   useEffect(() => {
@@ -100,9 +105,11 @@ const App = () => {
 
     console.log('liking blog succeeded', returnedBlog);
 
-    setBlogs(blogs.map((blog) => (
+    const blogArray = blogs.map((blog) => (
       blog.id !== returnedBlog.id ? blog : returnedBlog
-    )));
+    ));
+    blogArray.sort((a, b) => b.likes - a.likes);
+    setBlogs(blogArray);
   };
 
   return (
