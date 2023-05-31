@@ -19,9 +19,6 @@ const App = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
-  const [title, setTitle] = useState('');
-  const [author, setAuthor] = useState('');
-  const [url, setUrl] = useState('');
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [notificationType, setNotificationType] = useState(null);
 
@@ -79,23 +76,17 @@ const App = () => {
   const handleUsernameChange = ({ target }) => setUsername(target.value);
   const handlePasswordChange = ({ target }) => setPassword(target.value);
 
-  const handleTitleChange = ({ target }) => setTitle(target.value);
-  const handleAuthorChange = ({ target }) => setAuthor(target.value);
-  const handleUrlChange = ({ target }) => setUrl(target.value);
-
-  const handleCreateBlog = async (event) => {
-    event.preventDefault();
-    console.log(`creating a new blog: (title) ${title}, (author) ${author}, (url) ${url}`);
+  const createBlog = async (blogObject) => {
+    console.log('creating a new blog:', blogObject);
 
     blogService.setToken(user.token);
-    const newBlog = await blogService.createBlog({ title, author, url });
-    console.log('posting of a new blog succeeded', newBlog);
-    setTitle('');
-    setAuthor('');
-    setUrl('');
-    setBlogs(blogs.concat(newBlog));
+    const returnedBlog = await blogService.createBlog(blogObject);
+
+    console.log('posting of a new blog succeeded', returnedBlog);
+
+    setBlogs(blogs.concat(returnedBlog));
     setNotification(
-      `a new blog ${newBlog.title} added`,
+      `a new blog ${returnedBlog.title} added`,
       'success',
     );
     blogFormRef.current.toggleVisibility();
@@ -136,15 +127,7 @@ const App = () => {
             </p>
 
             <Togglable buttonLabel="create blog" ref={blogFormRef}>
-              <CreateBlogForm
-                title={title}
-                author={author}
-                url={url}
-                handleTitleChange={handleTitleChange}
-                handleAuthorChange={handleAuthorChange}
-                handleUrlChange={handleUrlChange}
-                handleCreate={handleCreateBlog}
-              />
+              <CreateBlogForm createBlog={createBlog} />
             </Togglable>
             <BlogList blogs={blogs} />
           </div>
