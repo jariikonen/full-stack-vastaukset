@@ -149,8 +149,11 @@ describe('when there are initially some blogs saved', () => {
       const blogToUpdate = blogsAtStart[0];
       blogToUpdate.likes += 1;
 
+      const token = await helper.loginAs('testi1');
+
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
+        .set('Authorization', `bearer ${token}`)
         .send(blogToUpdate)
         .expect(200);
 
@@ -166,8 +169,11 @@ describe('when there are initially some blogs saved', () => {
       const blogToUpdate = blogsAtStart[0];
       const invalidBlogId = await helper.nonExistingId();
 
+      const token = await helper.loginAs('testi1');
+
       await api
         .put(`/api/blogs/${invalidBlogId}`)
+        .set('Authorization', `bearer ${token}`)
         .send(blogToUpdate)
         .expect(404);
     });
@@ -177,8 +183,11 @@ describe('when there are initially some blogs saved', () => {
       const blogToUpdate = blogsAtStart[0];
       const malformedId = '3';
 
+      const token = await helper.loginAs('testi1');
+
       await api
         .put(`/api/blogs/${malformedId}`)
+        .set('Authorization', `bearer ${token}`)
         .send(blogToUpdate)
         .expect(400);
     });
