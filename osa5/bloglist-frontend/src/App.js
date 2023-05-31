@@ -1,12 +1,18 @@
 /* eslint-disable no-console */
 /* eslint-disable react/function-component-definition */
-import { React, useState, useEffect } from 'react';
+import {
+  React,
+  useState,
+  useEffect,
+  useRef,
+} from 'react';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
 import CreateBlogForm from './components/CreateBlogForm';
 import Notification from './components/Notification';
+import Togglable from './components/Togglable';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
@@ -18,6 +24,8 @@ const App = () => {
   const [url, setUrl] = useState('');
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [notificationType, setNotificationType] = useState(null);
+
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((b) => setBlogs(b));
@@ -90,6 +98,7 @@ const App = () => {
       `a new blog ${newBlog.title} added`,
       'success',
     );
+    blogFormRef.current.toggleVisibility();
   };
 
   return (
@@ -126,15 +135,17 @@ const App = () => {
               <button type="button" onClick={handleLogout}>logout</button>
             </p>
 
-            <CreateBlogForm
-              title={title}
-              author={author}
-              url={url}
-              handleTitleChange={handleTitleChange}
-              handleAuthorChange={handleAuthorChange}
-              handleUrlChange={handleUrlChange}
-              handleCreate={handleCreateBlog}
-            />
+            <Togglable buttonLabel="create blog" ref={blogFormRef}>
+              <CreateBlogForm
+                title={title}
+                author={author}
+                url={url}
+                handleTitleChange={handleTitleChange}
+                handleAuthorChange={handleAuthorChange}
+                handleUrlChange={handleUrlChange}
+                handleCreate={handleCreateBlog}
+              />
+            </Togglable>
             <BlogList blogs={blogs} />
           </div>
         )}
