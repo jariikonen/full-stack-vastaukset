@@ -24,10 +24,13 @@ describe('<Blog />', () => {
     username: 'kayttaja',
   };
 
-  const mockLikeHandler = jest.fn();
-  const mockRemoveHandler = jest.fn();
+  let mockLikeHandler;
+  let mockRemoveHandler;
 
   beforeEach(() => {
+    mockLikeHandler = jest.fn();
+    mockRemoveHandler = jest.fn();
+
     render(
       <Blog
         blog={blog}
