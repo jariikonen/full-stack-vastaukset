@@ -3,9 +3,22 @@
 import React from 'react';
 import Blog from './Blog';
 
-const BlogList = ({ blogs, likeBlog }) => (
+const BlogList = ({
+  blogs,
+  likeBlog,
+  removeBlog,
+  user,
+}) => (
   <div>
-    {blogs.map((blog) => <Blog key={blog.id} blog={blog} likeBlog={likeBlog} />)}
+    {blogs.map((blog) => (
+      <Blog
+        key={blog.id}
+        blog={blog}
+        likeBlog={likeBlog}
+        removeBlog={removeBlog}
+        user={user}
+      />
+    ))}
   </div>
 );
 

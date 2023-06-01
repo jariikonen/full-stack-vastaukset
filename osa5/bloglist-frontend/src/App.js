@@ -112,6 +112,24 @@ const App = () => {
     setBlogs(blogArray);
   };
 
+  const removeBlog = async (blogObject) => {
+    console.log('removing blog', blogObject.id);
+
+    // eslint-disable-next-line no-alert
+    const confirmation = window.confirm(`Remove blog ${blogObject.title}?`);
+
+    if (confirmation) {
+      blogService.setToken(user.token);
+      await blogService.deleteBlog(blogObject.id);
+
+      console.log(`removing of blog ${blogObject.id} succeeded`);
+
+      setBlogs(blogs.filter((blog) => blog.id !== blogObject.id));
+    } else {
+      console.log(`removing of blog ${blogObject.id} was cancelled`);
+    }
+  };
+
   return (
     <div>
       {!user
@@ -149,7 +167,12 @@ const App = () => {
             <Togglable buttonLabel="create blog" ref={blogFormRef}>
               <CreateBlogForm createBlog={createBlog} />
             </Togglable>
-            <BlogList blogs={blogs} likeBlog={likeBlog} />
+            <BlogList
+              blogs={blogs}
+              likeBlog={likeBlog}
+              removeBlog={removeBlog}
+              user={user}
+            />
           </div>
         )}
     </div>

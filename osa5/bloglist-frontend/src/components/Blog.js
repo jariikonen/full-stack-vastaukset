@@ -3,7 +3,12 @@
 /* eslint-disable react/function-component-definition */
 import { React, useState } from 'react';
 
-const Blog = ({ blog, likeBlog }) => {
+const Blog = ({
+  blog,
+  likeBlog,
+  removeBlog,
+  user,
+}) => {
   const [condensed, setCondensed] = useState(true);
 
   const toggleSize = () => {
@@ -58,6 +63,8 @@ const Blog = ({ blog, likeBlog }) => {
         <button type="button" onClick={handleLike}>like</button>
       </div>
       <div>{blog.user.name}</div>
+      {user.username === blog.user.username
+        && <button type="button" onClick={() => removeBlog(blog)}>remove</button>}
     </div>
   );
 };
