@@ -1,5 +1,4 @@
 /* eslint-disable no-console */
-/* eslint-disable react/function-component-definition */
 import {
   React,
   useState,

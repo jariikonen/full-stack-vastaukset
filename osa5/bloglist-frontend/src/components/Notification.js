@@ -1,6 +1,5 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Notification = ({ message, type }) => {
   if (message === null) {
@@ -12,6 +11,16 @@ const Notification = ({ message, type }) => {
       {message}
     </div>
   );
+};
+
+Notification.defaultProps = {
+  message: null,
+  type: null,
+};
+
+Notification.propTypes = {
+  message: PropTypes.string,
+  type: PropTypes.string,
 };
 
 export default Notification;

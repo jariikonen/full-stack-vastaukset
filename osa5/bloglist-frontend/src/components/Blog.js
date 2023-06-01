@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
-/* eslint-disable react/prop-types */
-/* eslint-disable react/function-component-definition */
 import { React, useState } from 'react';
+import PropTypes from 'prop-types';
 
 const Blog = ({
   blog,
@@ -67,6 +65,28 @@ const Blog = ({
         && <button type="button" onClick={() => removeBlog(blog)}>remove</button>}
     </div>
   );
+};
+
+Blog.propTypes = {
+  blog: PropTypes.shape({
+    author: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    likes: PropTypes.number.isRequired,
+    title: PropTypes.string.isRequired,
+    url: PropTypes.string.isRequired,
+    user: PropTypes.shape({
+      username: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      id: PropTypes.string.isRequired,
+    }),
+  }).isRequired,
+  likeBlog: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired,
+  user: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    token: PropTypes.string.isRequired,
+    username: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 export default Blog;
