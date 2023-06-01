@@ -50,11 +50,25 @@ describe('<Blog />', () => {
 
   test('renders also likes, url and username after the view button has been clicked', async () => {
     const user = userEvent.setup();
+
     const button = screen.getByText('view');
     await user.click(button);
 
     screen.getByText(`likes ${blog.likes}`);
     screen.getByText(blog.url);
     screen.getByText(blogUser.name);
+  });
+
+  test('pressing like button works correctly', async () => {
+    const user = userEvent.setup();
+
+    const viewButton = screen.getByText('view');
+    await user.click(viewButton);
+
+    const likeButton = screen.getByText('like');
+    await user.click(likeButton);
+    await user.click(likeButton);
+
+    expect(mockLikeHandler.mock.calls).toHaveLength(2);
   });
 });
