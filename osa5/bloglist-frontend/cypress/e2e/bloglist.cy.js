@@ -33,4 +33,26 @@ describe('Blog app', function() {
       cy.contains('wrong username or password');
     });
   });
+
+  describe('When logged in', function() {
+    beforeEach(function() {
+      cy.request('POST', 'http://localhost:3003/api/login', {
+        username: 'jikon',
+        password: 'salainen',
+      }).then((response) => {
+        localStorage.setItem('loggedBloglistUser', JSON.stringify(response.body));
+        cy.visit('http://localhost:3000');
+      });
+    });
+
+    it('A blog can be created', function() {
+      cy.get('button').contains('create blog').click();
+      cy.get('input').get('[name="Title"]').type('Testiblogi');
+      cy.get('input').get('[name="Author"]').type('Testikirjoittaja');
+      cy.get('input').get('[name="Url"]').type('Testiurl');
+      cy.get('[data-cy="submit-blog"]').click();
+
+      cy.contains('Testiblogi Testikirjoittaja');
+    });
+  });
 });

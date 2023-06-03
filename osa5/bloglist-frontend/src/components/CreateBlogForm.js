@@ -53,7 +53,7 @@ const CreateBlogForm = ({ createBlog }) => {
             onChange={({ target }) => setUrl(target.value)}
           />
         </div>
-        <button type="submit">create</button>
+        <button type="submit" data-cy="submit-blog">create</button> {/* https://docs.cypress.io/guides/references/best-practices#Selecting-Elements */}
       </form>
     </div>
   );
