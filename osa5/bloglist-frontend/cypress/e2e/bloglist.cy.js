@@ -1,13 +1,13 @@
 describe('Blog app', function() {
+  const testUser = {
+    username: 'terttu',
+    name: 'Terttu Testaaja',
+    password: 'salainen',
+  };
+
   beforeEach(function() {
-    cy.request('POST', 'http://localhost:3003/api/testing/reset');
-    cy.request('POST', 'http://localhost:3003/api/users', {
-      username: 'jikon',
-      name: 'Jari Ikonen',
-      password: 'salainen',
-    }).then(() => {
-      cy.visit('http://localhost:3000');
-    });
+    cy.resetDatabase();
+    cy.addUser(testUser);
   });
 
   it('Login form is shown', function() {
@@ -18,11 +18,11 @@ describe('Blog app', function() {
 
   describe('Login',function() {
     it('succeeds with correct credentials', function() {
-      cy.get('#username').type('jikon');
-      cy.get('#password').type('salainen');
+      cy.get('#username').type(testUser.username);
+      cy.get('#password').type(testUser.password);
       cy.get('#login-button').click();
 
-      cy.contains('logged in as Jari Ikonen');
+      cy.contains(`logged in as ${testUser.name}`);
     });
 
     it('fails with wrong credentials', function() {
@@ -36,13 +36,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.request('POST', 'http://localhost:3003/api/login', {
-        username: 'jikon',
-        password: 'salainen',
-      }).then((response) => {
-        localStorage.setItem('loggedBloglistUser', JSON.stringify(response.body));
-        cy.visit('http://localhost:3000');
-      });
+      cy.login(testUser.username, testUser.password);
     });
 
     it('A blog can be created', function() {
