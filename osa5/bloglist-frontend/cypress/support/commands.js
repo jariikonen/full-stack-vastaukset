@@ -62,3 +62,15 @@ Cypress.Commands.add('postBlog', (blogObject) => {
     cy.visit('');
   });
 });
+
+Cypress.Commands.add('viewBlog', (blogObject) => {
+  cy.contains(`${blogObject.title} ${blogObject.author}`)
+    .find('button').contains('view').click();
+});
+
+Cypress.Commands.add('likeBlog', (blogObject, nth) => {
+  cy.contains(`${blogObject.title} ${blogObject.author}`)
+    .parent().find('button').contains('like').click();
+  cy.contains(`${blogObject.title} ${blogObject.author}`)
+    .parent().should('contain', `likes ${nth}`);
+});
