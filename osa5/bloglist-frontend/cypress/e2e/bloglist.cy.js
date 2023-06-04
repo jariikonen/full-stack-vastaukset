@@ -76,6 +76,7 @@ describe('Blog app', function() {
           .get('button')
           .contains('like')
           .click();
+
         cy.contains(`${testBlog.title} ${testBlog.author}`)
           .parent()
           .contains('likes 1');
@@ -87,6 +88,7 @@ describe('Blog app', function() {
           .get('button')
           .contains('remove')
           .click();
+
         cy.get('html').should('not.contain', `${testBlog.title} ${testBlog.author}`);
       });
     });
