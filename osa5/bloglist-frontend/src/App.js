@@ -15,8 +15,6 @@ import Togglable from './components/Togglable';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
   const [user, setUser] = useState(null);
   const [notificationMessage, setNotificationMessage] = useState(null);
   const [notificationType, setNotificationType] = useState(null);
@@ -49,8 +47,7 @@ const App = () => {
     }, 5000);
   };
 
-  const handleLogin = async (event) => {
-    event.preventDefault();
+  const login = async (username, password) => {
     console.log('logging in with', username, password, '...');
 
     try {
@@ -60,8 +57,6 @@ const App = () => {
       window.localStorage.setItem('loggedBloglistUser', JSON.stringify(usr));
 
       setUser(usr);
-      setUsername('');
-      setPassword('');
     } catch (exception) {
       setNotification(
         'wrong username or password (or both)',
@@ -76,9 +71,6 @@ const App = () => {
     window.localStorage.removeItem('loggedBloglistUser');
     window.location.reload();
   };
-
-  const handleUsernameChange = ({ target }) => setUsername(target.value);
-  const handlePasswordChange = ({ target }) => setPassword(target.value);
 
   const createBlog = async (blogObject) => {
     console.log('creating a new blog:', blogObject);
@@ -139,13 +131,7 @@ const App = () => {
               message={notificationMessage}
               type={notificationType}
             />
-            <LoginForm
-              handleLogin={handleLogin}
-              username={username}
-              handleUsernameChange={handleUsernameChange}
-              password={password}
-              handlePasswordChange={handlePasswordChange}
-            />
+            <LoginForm login={login} />
           </div>
         )
         : (
