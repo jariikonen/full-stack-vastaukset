@@ -44,7 +44,8 @@ describe('Blog app', function() {
       cy.get('#password').type('ei toimi');
       cy.get('#login-button').click();
 
-      cy.contains('wrong username or password');
+      cy.get('.error').contains('wrong username or password');
+      cy.get('html').should('not.contain', `logged in as ${testUsers[0].name}`);
     });
   });
 
