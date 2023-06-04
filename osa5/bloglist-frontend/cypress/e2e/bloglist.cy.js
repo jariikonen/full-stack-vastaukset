@@ -91,6 +91,18 @@ describe('Blog app', function() {
 
         cy.get('html').should('not.contain', `${testBlog.title} ${testBlog.author}`);
       });
+
+      it('Remove button is rendered only if logged in user has created the blog', function() {
+        cy.contains(`${testBlog.title} ${testBlog.author}`).parent().as('theBlog');
+        cy.get('@theBlog').contains(`${testUsers[0].name}`);
+        cy.get('@theBlog').find('button').contains('remove');
+
+        cy.get('button').contains('logout').click();
+        cy.login(testUsers[1].username, testUsers[1].password);
+        cy.get('@theBlog').find('button').contains('view').click();
+
+        cy.get('@theBlog').find('button').should('not.contain', 'remove');
+      });
     });
   });
 });
