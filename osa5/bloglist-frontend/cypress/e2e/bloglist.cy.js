@@ -1,9 +1,16 @@
 describe('Blog app', function() {
-  const testUser = {
-    username: 'terttu',
-    name: 'Terttu Testaaja',
-    password: 'salainen',
-  };
+  const testUsers = [
+    {
+      username: 'terttu',
+      name: 'Terttu Testaaja',
+      password: 'salainen',
+    },
+    {
+      username: 'tonttu',
+      name: 'Tonttu Toljanteri',
+      password: 'toljanteri',
+    },
+  ];
 
   const testBlog = {
     title: 'Testiblogi',
@@ -13,7 +20,8 @@ describe('Blog app', function() {
 
   beforeEach(function() {
     cy.resetDatabase();
-    cy.addUser(testUser);
+    cy.addUser(testUsers[0]);
+    cy.addUser(testUsers[1]);
   });
 
   it('Login form is shown', function() {
@@ -24,11 +32,11 @@ describe('Blog app', function() {
 
   describe('Login',function() {
     it('succeeds with correct credentials', function() {
-      cy.get('#username').type(testUser.username);
-      cy.get('#password').type(testUser.password);
+      cy.get('#username').type(testUsers[0].username);
+      cy.get('#password').type(testUsers[0].password);
       cy.get('#login-button').click();
 
-      cy.contains(`logged in as ${testUser.name}`);
+      cy.contains(`logged in as ${testUsers[0].name}`);
     });
 
     it('fails with wrong credentials', function() {
@@ -42,7 +50,7 @@ describe('Blog app', function() {
 
   describe('When logged in', function() {
     beforeEach(function() {
-      cy.login(testUser.username, testUser.password);
+      cy.login(testUsers[0].username, testUsers[0].password);
     });
 
     it('A blog can be created', function() {
@@ -70,6 +78,15 @@ describe('Blog app', function() {
         cy.contains(`${testBlog.title} ${testBlog.author}`)
           .parent()
           .contains('likes 1');
+      });
+
+      it('A blog can be removed by the user who created it', function() {
+        cy.contains(`${testBlog.title} ${testBlog.author}`)
+          .parent()
+          .get('button')
+          .contains('remove')
+          .click();
+        cy.get('html').should('not.contain', `${testBlog.title} ${testBlog.author}`);
       });
     });
   });
