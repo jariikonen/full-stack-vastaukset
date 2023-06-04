@@ -5,6 +5,12 @@ describe('Blog app', function() {
     password: 'salainen',
   };
 
+  const testBlog = {
+    title: 'Testiblogi',
+    author: 'Testikirjoittaja',
+    url: 'Testiurl',
+  };
+
   beforeEach(function() {
     cy.resetDatabase();
     cy.addUser(testUser);
@@ -41,12 +47,30 @@ describe('Blog app', function() {
 
     it('A blog can be created', function() {
       cy.get('button').contains('create blog').click();
-      cy.get('input').get('[name="Title"]').type('Testiblogi');
-      cy.get('input').get('[name="Author"]').type('Testikirjoittaja');
-      cy.get('input').get('[name="Url"]').type('Testiurl');
+      cy.get('input').get('[name="Title"]').type(testBlog.title);
+      cy.get('input').get('[name="Author"]').type(testBlog.author);
+      cy.get('input').get('[name="Url"]').type(testBlog.url);
       cy.get('[data-cy="submit-blog"]').click();
 
-      cy.contains('Testiblogi Testikirjoittaja');
+      cy.contains(`${testBlog.title} ${testBlog.author}`);
+    });
+
+    describe('When blogs have been created', function() {
+      beforeEach(function() {
+        cy.postBlog(testBlog);
+        cy.contains(`${testBlog.title} ${testBlog.author}`).get('button').contains('view').click();
+      });
+
+      it('A blog can be liked', function() {
+        cy.contains(`${testBlog.title} ${testBlog.author}`)
+          .parent()
+          .get('button')
+          .contains('like')
+          .click();
+        cy.contains(`${testBlog.title} ${testBlog.author}`)
+          .parent()
+          .contains('likes 1');
+      });
     });
   });
 });

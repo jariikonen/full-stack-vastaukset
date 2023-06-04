@@ -47,3 +47,18 @@ Cypress.Commands.add('login', (username, password) => {
     cy.visit('');
   });
 });
+
+Cypress.Commands.add('postBlog', (blogObject) => {
+  const { token } = JSON.parse(localStorage.getItem('loggedBloglistUser'));
+  cy.request({
+    method: 'POST',
+    url: `${Cypress.env('BACKEND')}/blogs`,
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `bearer ${token}`,
+    },
+    body: blogObject,
+  }).then(() => {
+    cy.visit('');
+  });
+});
