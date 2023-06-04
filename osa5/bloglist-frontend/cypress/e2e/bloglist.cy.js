@@ -56,9 +56,9 @@ describe('Blog app', function() {
 
     it('A blog can be created', function() {
       cy.get('button').contains('create blog').click();
-      cy.get('input').get('[name="Title"]').type(testBlog.title);
-      cy.get('input').get('[name="Author"]').type(testBlog.author);
-      cy.get('input').get('[name="Url"]').type(testBlog.url);
+      cy.get('input[name="Title"]').type(testBlog.title);
+      cy.get('input[name="Author"]').type(testBlog.author);
+      cy.get('input[name="Url"]').type(testBlog.url);
       cy.get('[data-cy="submit-blog"]').click();
 
       cy.contains(`${testBlog.title} ${testBlog.author}`);
@@ -67,25 +67,24 @@ describe('Blog app', function() {
     describe('When blogs have been created', function() {
       beforeEach(function() {
         cy.postBlog(testBlog);
-        cy.contains(`${testBlog.title} ${testBlog.author}`).get('button').contains('view').click();
+        cy.contains(`${testBlog.title} ${testBlog.author}`).find('button').contains('view').click();
       });
 
       it('A blog can be liked', function() {
         cy.contains(`${testBlog.title} ${testBlog.author}`)
           .parent()
-          .get('button')
+          .as('theBlog')
+          .find('button')
           .contains('like')
           .click();
 
-        cy.contains(`${testBlog.title} ${testBlog.author}`)
-          .parent()
-          .contains('likes 1');
+        cy.get('@theBlog').contains('likes 1');
       });
 
       it('A blog can be removed by the user who created it', function() {
         cy.contains(`${testBlog.title} ${testBlog.author}`)
           .parent()
-          .get('button')
+          .find('button')
           .contains('remove')
           .click();
 
