@@ -24,6 +24,8 @@ const reducer = (state = initialState, action) => {
   console.log('action', action);
 
   switch (action.type) {
+    case 'NEW_ANECDOTE':
+      return state.concat(asObject(action.payload));
     case 'VOTE':
       const id = action.payload.id;
       const anecdoteToChange = state.find((anecdote) => anecdote.id === id);
