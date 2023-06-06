@@ -8,11 +8,14 @@ const Notification = () => {
     borderWidth: 1,
     marginBottom: 10,
   };
-  return (
-    <div style={style}>
-      {notification}
-    </div>
-  );
+
+  if (notification) {
+    return (
+      <div style={style}>
+        {notification}
+      </div>
+    );
+  };
 };
 
 export default Notification;
