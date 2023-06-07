@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# json-palvelimen käyttämän db.js-tiedoston alustustiedosto
+db.json.varmistus
