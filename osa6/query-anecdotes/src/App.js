@@ -1,5 +1,5 @@
 import { useQuery } from 'react-query';
-import axios from 'axios';
+import { getAnecdotes } from './requests';
 import AnecdoteForm from './components/AnecdoteForm';
 import Notification from './components/Notification';
 
@@ -7,7 +7,7 @@ const App = () => {
 
   const result = useQuery(
     'anecdotes',
-    () => axios.get('http://localhost:3001/anecdotes').then(res => res.data),
+    getAnecdotes,
     {
       retry: 1, // vain yksi uudelleenyritys
     },
