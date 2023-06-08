@@ -1,19 +1,22 @@
 import { useMutation, useQueryClient } from 'react-query';
 import { createAnecdote } from '../requests';
-import { useNotificationDispatch, setNotification, clearNotification } from '../NotificationContext';
+import { useNotification } from '../NotificationContext';
 
 const AnecdoteForm = () => {
   const queryClient =  useQueryClient();
-  const dispatch = useNotificationDispatch();
+  // mallivastauksen pohjalta tehtyä viestin näyttävää custom hookia käytetään näin,
+  // ottamalla hookin palauttama funktio muuttujaan notifyWith
+  const notifyWith = useNotification();
 
   const newAnecdoteMutation = useMutation(createAnecdote, {
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData('anecdotes');
       queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote));
     },
-    onError: () => {
-      dispatch(setNotification('too short anecdote - anecdote must be at least 5 characters long'));
-      setTimeout(() => dispatch(clearNotification()), 5000);
+    // mallivastauksen pohjalta päivitin myös virheenkäsittelijän käyttämään react-query:ltä
+    // saatua virheviestiä
+    onError: (error) => {
+      notifyWith(error.response.data.error);
     }
   });
 
@@ -26,8 +29,7 @@ const AnecdoteForm = () => {
       content,
       votes: 0,
     });
-    dispatch(setNotification(`new anecdote '${content}' created`));
-    setTimeout(() => dispatch(clearNotification()), 5000);
+    notifyWith(`new anecdote '${content}' created`);
 }
 
   return (

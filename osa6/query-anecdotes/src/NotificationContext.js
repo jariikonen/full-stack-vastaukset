@@ -2,9 +2,9 @@ import { createContext, useReducer, useContext } from 'react';
 
 const notificationReducer = (state, action) => {
   switch (action.type) {
-    case 'SET_TEXT':
+    case 'SET':
         return action.payload;
-    case 'CLEAR_TEXT':
+    case 'CLEAR':
         return null;
     default:
         return state;
@@ -14,8 +14,8 @@ const notificationReducer = (state, action) => {
 const NotificationContext = createContext();
 
 export const useNotificationText = () => {
-  const textAndDispatch = useContext(NotificationContext);
-  return textAndDispatch[0];
+  const [text] = useContext(NotificationContext);
+  return text;
 };
 
 export const useNotificationDispatch = () => {
@@ -25,14 +25,25 @@ export const useNotificationDispatch = () => {
 
 export const setNotification = (text) => {
   return {
-    type: 'SET_TEXT',
+    type: 'SET',
     payload: text,
   };
 };
 
 export const clearNotification = () => {
   return {
-    type: 'CLEAR_TEXT',
+    type: 'CLEAR',
+  };
+};
+
+// päivitin sovelluksen käyttämään uuden anekdootin tallennuksessa tätä tehtävän mallivastauksen
+// pohjalta tehtyä custom hookia
+export const useNotification = () => {
+  const textAndDispatch = useContext(NotificationContext);
+  const dispatch = textAndDispatch[1];
+  return (payload) => {
+    dispatch({ type: 'SET', payload });
+    setTimeout(() => dispatch({ type: 'CLEAR'}), 5000);
   };
 };
 
