@@ -11,6 +11,10 @@ const AnecdoteForm = () => {
       const anecdotes = queryClient.getQueryData('anecdotes');
       queryClient.setQueryData('anecdotes', anecdotes.concat(newAnecdote));
     },
+    onError: () => {
+      dispatch(setNotification('too short anecdote - anecdote must be at least 5 characters long'));
+      setTimeout(() => dispatch(clearNotification()), 5000);
+    }
   });
 
   const onCreate = (event) => {
@@ -34,7 +38,7 @@ const AnecdoteForm = () => {
         <button type="submit">create</button>
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default AnecdoteForm
+export default AnecdoteForm;
