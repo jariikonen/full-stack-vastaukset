@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, useMatch } from 'react-router-dom';
 
 const Menu = () => {
   const padding = {
@@ -7,9 +7,9 @@ const Menu = () => {
   };
   return (
     <div>
-      <Link to='/anecdotes' style={padding}>anecdotes</Link>
-      <Link to='/create' style={padding}>create new</Link>
-      <Link to='/about' style={padding}>about</Link>
+      <Link to="/anecdotes" style={padding}>anecdotes</Link>
+      <Link to="/create" style={padding}>create new</Link>
+      <Link to="/about" style={padding}>about</Link>
     </div>
   );
 };
@@ -18,7 +18,13 @@ const AnecdoteList = ({ anecdotes }) => (
   <div>
     <h2>Anecdotes</h2>
     <ul>
-      {anecdotes.map(anecdote => <li key={anecdote.id} >{anecdote.content}</li>)}
+      {anecdotes.map((anecdote) => (
+        <li key={anecdote.id} >
+          <Link to={`/anecdotes/${anecdote.id}`}>
+            {anecdote.content}
+          </Link>
+        </li>
+      ))}
     </ul>
   </div>
 );
@@ -38,7 +44,7 @@ const About = () => (
 );
 
 const Footer = () => (
-  <div>
+  <div style={{ marginTop: 10 }}>
     Anecdote app for <a href='https://fullstackopen.com/'>Full Stack Open</a>.
 
     See <a href='https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js'>https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js</a> for the source code.
@@ -83,6 +89,23 @@ const CreateNew = (props) => {
   );
 };
 
+const Anecdote = ({ anecdote }) => {
+  const style = {
+    marginBottom: 5,
+    paddingLeft: 5,
+  };
+  return (
+    <div>
+      <h2>{anecdote.content}</h2>
+      <div style={style}>{`has ${anecdote.votes} votes`}</div>
+      <div style={style}>
+        {'for more info see '}
+        <a href={anecdote.info}>{anecdote.info}</a>
+      </div>
+    </div>
+  );
+};
+
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
     {
@@ -100,6 +123,11 @@ const App = () => {
       id: 2,
     },
   ]);
+
+  const match = useMatch('/anecdotes/:id');
+  const anecdote = match
+    ? anecdotes.find((anecdote) => anecdote.id === Number(match.params.id))
+    : null;
 
   const [notification, setNotification] = useState('');
 
@@ -127,6 +155,7 @@ const App = () => {
       <h1>Software anecdotes</h1>
       <Menu />
       <Routes>
+        <Route path='/anecdotes/:id' element={<Anecdote anecdote={anecdote} />} />
         <Route path="/anecdotes" element={<AnecdoteList anecdotes={anecdotes} />} />
         <Route path="/create" element={<CreateNew addNew={addNew} />} />
         <Route path="/about" element={<About />} />
