@@ -96,7 +96,7 @@ const Anecdote = ({ anecdote }) => {
   };
   return (
     <div>
-      <h2>{anecdote.content}</h2>
+      <h2>{`${anecdote.content} by ${anecdote.author}`}</h2>
       <div style={style}>{`has ${anecdote.votes} votes`}</div>
       <div style={style}>
         {'for more info see '}
