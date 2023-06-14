@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import blogService from '../services/blogs';
 import { setBlogs } from '../reducers/blogsReducer';
 
-const Blog = ({ blog, user }) => {
+const Blog = ({ blog }) => {
   const [condensed, setCondensed] = useState(true);
 
   const blogs = useSelector((state) => state.blogs);
+  const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const likeBlog = async (blogObject) => {

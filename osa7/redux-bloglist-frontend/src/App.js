@@ -1,18 +1,15 @@
 /* eslint-disable no-console */
-import { React, useState, useEffect, useRef } from 'react';
-import { useDispatch } from 'react-redux';
-import loginService from './services/login';
+import { React, useEffect, useRef } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
 import CreateBlogForm from './components/CreateBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
-import { setNotification } from './reducers/notificationReducer';
 import { initializeBlogs } from './reducers/blogsReducer';
+import { setUser, initializeUser } from './reducers/userReducer';
 
 const App = () => {
-  const [user, setUser] = useState(null);
-
   const blogFormRef = useRef();
   const dispatch = useDispatch();
 
@@ -21,34 +18,15 @@ const App = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
-    if (loggedUserJSON) {
-      const usr = JSON.parse(loggedUserJSON);
-      setUser(usr);
-    }
-  }, []);
+    dispatch(initializeUser());
+  }, [dispatch]);
 
-  const login = async (username, password) => {
-    console.log('logging in with', username, password, '...');
-
-    try {
-      const usr = await loginService.login({ username, password });
-      console.log('login succeeded', usr);
-
-      window.localStorage.setItem('loggedBloglistUser', JSON.stringify(usr));
-
-      setUser(usr);
-    } catch (exception) {
-      dispatch(
-        setNotification('wrong username or password (or both)', 'error')
-      );
-      console.log('login failed:', exception);
-    }
-  };
+  const user = useSelector((state) => state.user);
 
   const handleLogout = async () => {
     console.log(`logging out user '${user.name}' ...`);
     window.localStorage.removeItem('loggedBloglistUser');
+    dispatch(setUser(null));
     window.location.reload();
   };
 
@@ -58,7 +36,7 @@ const App = () => {
         <div>
           <h2>log in to application</h2>
           <Notification />
-          <LoginForm login={login} />
+          <LoginForm />
         </div>
       ) : (
         <div>
@@ -72,9 +50,9 @@ const App = () => {
           </p>
 
           <Togglable buttonLabel="create blog" ref={blogFormRef}>
-            <CreateBlogForm user={user} blogFormRef={blogFormRef} />
+            <CreateBlogForm blogFormRef={blogFormRef} />
           </Togglable>
-          <BlogList user={user} />
+          <BlogList />
         </div>
       )}
     </div>
