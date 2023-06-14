@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 import { React, useState, useEffect, useRef } from 'react';
+import { useDispatch } from 'react-redux';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
@@ -7,14 +8,14 @@ import BlogList from './components/BlogList';
 import CreateBlogForm from './components/CreateBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
+import { setNotification } from './reducers/notificationReducer';
 
 const App = () => {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
-  const [notificationMessage, setNotificationMessage] = useState(null);
-  const [notificationType, setNotificationType] = useState(null);
 
   const blogFormRef = useRef();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const loadBlogs = async () => {
@@ -33,15 +34,6 @@ const App = () => {
     }
   }, []);
 
-  const setNotification = (message, type) => {
-    setNotificationMessage(message);
-    setNotificationType(type);
-    setTimeout(() => {
-      setNotificationMessage(null);
-      setNotificationType(null);
-    }, 5000);
-  };
-
   const login = async (username, password) => {
     console.log('logging in with', username, password, '...');
 
@@ -53,7 +45,9 @@ const App = () => {
 
       setUser(usr);
     } catch (exception) {
-      setNotification('wrong username or password (or both)', 'error');
+      dispatch(
+        setNotification('wrong username or password (or both)', 'error')
+      );
       console.log('login failed:', exception);
     }
   };
@@ -73,7 +67,9 @@ const App = () => {
     console.log('posting of a new blog succeeded', returnedBlog);
 
     setBlogs(blogs.concat(returnedBlog));
-    setNotification(`a new blog ${returnedBlog.title} added`, 'success');
+    dispatch(
+      setNotification(`a new blog ${returnedBlog.title} added`, 'success')
+    );
     blogFormRef.current.toggleVisibility();
   };
 
@@ -115,13 +111,13 @@ const App = () => {
       {!user ? (
         <div>
           <h2>log in to application</h2>
-          <Notification message={notificationMessage} type={notificationType} />
+          <Notification />
           <LoginForm login={login} />
         </div>
       ) : (
         <div>
           <h2>blogs</h2>
-          <Notification message={notificationMessage} type={notificationType} />
+          <Notification />
           <p>
             logged in as {user.name}{' '}
             <button type="button" onClick={handleLogout}>
