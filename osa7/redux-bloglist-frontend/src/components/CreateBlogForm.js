@@ -40,8 +40,7 @@ const CreateBlogForm = ({ createBlog }) => {
           />
         </div>
         <div>
-          <label id="url-label">url</label>
-          url{' '}
+          <label id="url-label">url</label>{' '}
           <input
             aria-labelledby="url-label"
             type="text"
