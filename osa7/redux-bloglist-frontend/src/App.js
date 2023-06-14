@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 import { React, useState, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
-import blogService from './services/blogs';
 import loginService from './services/login';
 import LoginForm from './components/LoginForm';
 import BlogList from './components/BlogList';
@@ -9,22 +8,17 @@ import CreateBlogForm from './components/CreateBlogForm';
 import Notification from './components/Notification';
 import Togglable from './components/Togglable';
 import { setNotification } from './reducers/notificationReducer';
+import { initializeBlogs } from './reducers/blogsReducer';
 
 const App = () => {
-  const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
 
   const blogFormRef = useRef();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const loadBlogs = async () => {
-      const receivedBlogs = await blogService.getAll();
-      receivedBlogs.sort((a, b) => b.likes - a.likes);
-      setBlogs(receivedBlogs);
-    };
-    loadBlogs();
-  }, []);
+    dispatch(initializeBlogs());
+  }, [dispatch]);
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
@@ -58,54 +52,6 @@ const App = () => {
     window.location.reload();
   };
 
-  const createBlog = async (blogObject) => {
-    console.log('creating a new blog:', blogObject);
-
-    blogService.setToken(user.token);
-    const returnedBlog = await blogService.createBlog(blogObject);
-
-    console.log('posting of a new blog succeeded', returnedBlog);
-
-    setBlogs(blogs.concat(returnedBlog));
-    dispatch(
-      setNotification(`a new blog ${returnedBlog.title} added`, 'success')
-    );
-    blogFormRef.current.toggleVisibility();
-  };
-
-  const likeBlog = async (blogObject) => {
-    console.log('liking blog', blogObject);
-
-    blogService.setToken(user.token);
-    const returnedBlog = await blogService.updateBlog(blogObject);
-
-    console.log('liking blog succeeded', returnedBlog);
-
-    const blogArray = blogs.map((blog) =>
-      blog.id !== returnedBlog.id ? blog : returnedBlog
-    );
-    blogArray.sort((a, b) => b.likes - a.likes);
-    setBlogs(blogArray);
-  };
-
-  const removeBlog = async (blogObject) => {
-    console.log('removing blog', blogObject.id);
-
-    // eslint-disable-next-line no-alert
-    const confirmation = window.confirm(`Remove blog ${blogObject.title}?`);
-
-    if (confirmation) {
-      blogService.setToken(user.token);
-      await blogService.deleteBlog(blogObject.id);
-
-      console.log(`removing of blog ${blogObject.id} succeeded`);
-
-      setBlogs(blogs.filter((blog) => blog.id !== blogObject.id));
-    } else {
-      console.log(`removing of blog ${blogObject.id} was cancelled`);
-    }
-  };
-
   return (
     <div>
       {!user ? (
@@ -126,14 +72,9 @@ const App = () => {
           </p>
 
           <Togglable buttonLabel="create blog" ref={blogFormRef}>
-            <CreateBlogForm createBlog={createBlog} />
+            <CreateBlogForm user={user} blogFormRef={blogFormRef} />
           </Togglable>
-          <BlogList
-            blogs={blogs}
-            likeBlog={likeBlog}
-            removeBlog={removeBlog}
-            user={user}
-          />
+          <BlogList user={user} />
         </div>
       )}
     </div>

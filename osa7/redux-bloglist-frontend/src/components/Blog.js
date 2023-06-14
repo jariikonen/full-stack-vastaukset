@@ -1,8 +1,46 @@
 import { React, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useSelector, useDispatch } from 'react-redux';
+import blogService from '../services/blogs';
+import { setBlogs } from '../reducers/blogsReducer';
 
-const Blog = ({ blog, likeBlog, removeBlog, user }) => {
+const Blog = ({ blog, user }) => {
   const [condensed, setCondensed] = useState(true);
+
+  const blogs = useSelector((state) => state.blogs);
+  const dispatch = useDispatch();
+
+  const likeBlog = async (blogObject) => {
+    console.log('liking blog', blogObject);
+
+    blogService.setToken(user.token);
+    const returnedBlog = await blogService.updateBlog(blogObject);
+
+    console.log('liking blog succeeded', returnedBlog);
+
+    const blogArray = blogs.map((blog) =>
+      blog.id !== returnedBlog.id ? blog : returnedBlog
+    );
+    blogArray.sort((a, b) => b.likes - a.likes);
+    dispatch(setBlogs(blogArray));
+  };
+
+  const removeBlog = async (blogObject) => {
+    console.log('removing blog', blogObject.id);
+
+    // eslint-disable-next-line no-alert
+    const confirmation = window.confirm(`Remove blog ${blogObject.title}?`);
+
+    if (confirmation) {
+      blogService.setToken(user.token);
+      await blogService.deleteBlog(blogObject.id);
+
+      console.log(`removing of blog ${blogObject.id} succeeded`);
+
+      dispatch(setBlogs(blogs.filter((blog) => blog.id !== blogObject.id)));
+    } else {
+      console.log(`removing of blog ${blogObject.id} was cancelled`);
+    }
+  };
 
   const toggleSize = () => {
     setCondensed(!condensed);
@@ -60,28 +98,6 @@ const Blog = ({ blog, likeBlog, removeBlog, user }) => {
       )}
     </div>
   );
-};
-
-Blog.propTypes = {
-  blog: PropTypes.shape({
-    author: PropTypes.string.isRequired,
-    id: PropTypes.string.isRequired,
-    likes: PropTypes.number.isRequired,
-    title: PropTypes.string.isRequired,
-    url: PropTypes.string.isRequired,
-    user: PropTypes.shape({
-      username: PropTypes.string.isRequired,
-      name: PropTypes.string.isRequired,
-      id: PropTypes.string.isRequired,
-    }),
-  }).isRequired,
-  likeBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    name: PropTypes.string.isRequired,
-    token: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-  }).isRequired,
 };
 
 export default Blog;

@@ -1,10 +1,30 @@
 import { React, useState } from 'react';
-import PropTypes from 'prop-types';
+import { useDispatch } from 'react-redux';
+import blogService from '../services/blogs';
+import { appendBlog } from '../reducers/blogsReducer';
+import { setNotification } from '../reducers/notificationReducer';
 
-const CreateBlogForm = ({ createBlog }) => {
+const CreateBlogForm = ({ user, blogFormRef }) => {
   const [title, setTitle] = useState('');
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
+
+  const dispatch = useDispatch();
+
+  const createBlog = async (blogObject) => {
+    console.log('creating a new blog:', blogObject);
+
+    blogService.setToken(user.token);
+    const returnedBlog = await blogService.createBlog(blogObject);
+
+    console.log('posting of a new blog succeeded', returnedBlog);
+
+    dispatch(appendBlog(returnedBlog));
+    dispatch(
+      setNotification(`a new blog ${returnedBlog.title} added`, 'success')
+    );
+    blogFormRef.current.toggleVisibility();
+  };
 
   const handleCreate = (event) => {
     event.preventDefault();
@@ -51,15 +71,11 @@ const CreateBlogForm = ({ createBlog }) => {
         </div>
         <button type="submit" data-cy="submit-blog">
           create
-        </button>{' '}
+        </button>
         {/* https://docs.cypress.io/guides/references/best-practices#Selecting-Elements */}
       </form>
     </div>
   );
-};
-
-CreateBlogForm.propTypes = {
-  createBlog: PropTypes.func.isRequired,
 };
 
 export default CreateBlogForm;
