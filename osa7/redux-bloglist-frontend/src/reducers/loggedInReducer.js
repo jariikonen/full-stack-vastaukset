@@ -22,8 +22,9 @@ export const initializeLoggedInUser = () => {
         usr
       );
       dispatch(setLoggedInUser(usr));
+    } else {
+      console.log('initializeLoggedInUser: not logged in');
     }
-    console.log('initializeLoggedInUser: not logged in');
   };
 };
 
