@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Routes, Route, useMatch } from 'react-router-dom';
+import { Routes, Route, useMatch, Navigate } from 'react-router-dom';
 import { initializeBlogs } from './reducers/blogsReducer';
 import { initializeLoggedInUser } from './reducers/loggedInReducer';
 import { initializeUserList } from './reducers/userListReducer';
@@ -89,6 +89,7 @@ const App = () => {
             />
           }
         />
+        <Route path="/blogs" element={<Navigate replace to="/" />} />
       </Routes>
     </div>
   );

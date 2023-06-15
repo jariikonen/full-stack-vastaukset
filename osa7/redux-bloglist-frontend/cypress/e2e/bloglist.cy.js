@@ -80,6 +80,7 @@ describe('Blog app', function () {
       beforeEach(function () {
         cy.postBlog(testBlogs[0]);
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
+          .parent()
           .find('button')
           .contains('view')
           .click();
@@ -87,6 +88,7 @@ describe('Blog app', function () {
 
       it('A blog can be liked', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
+          .parent()
           .parent()
           .as('theBlog')
           .find('button')
@@ -98,6 +100,7 @@ describe('Blog app', function () {
 
       it('A blog can be removed by the user who created it', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
+          .parent()
           .parent()
           .find('button')
           .contains('remove')
@@ -111,6 +114,7 @@ describe('Blog app', function () {
 
       it('Remove button is rendered only if logged in user has created the blog', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
+          .parent()
           .parent()
           .as('theBlog');
         cy.get('@theBlog').contains(`${testUsers[0].name}`);

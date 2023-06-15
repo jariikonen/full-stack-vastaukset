@@ -65,6 +65,7 @@ Cypress.Commands.add('postBlog', (blogObject) => {
 
 Cypress.Commands.add('viewBlog', (blogObject) => {
   cy.contains(`${blogObject.title} ${blogObject.author}`)
+    .parent()
     .find('button')
     .contains('view')
     .click();
@@ -73,10 +74,12 @@ Cypress.Commands.add('viewBlog', (blogObject) => {
 Cypress.Commands.add('likeBlog', (blogObject, nth) => {
   cy.contains(`${blogObject.title} ${blogObject.author}`)
     .parent()
+    .parent()
     .find('button')
     .contains('like')
     .click();
   cy.contains(`${blogObject.title} ${blogObject.author}`)
+    .parent()
     .parent()
     .should('contain', `likes ${nth}`);
 });
