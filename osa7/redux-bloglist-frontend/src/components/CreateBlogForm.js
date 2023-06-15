@@ -9,13 +9,13 @@ const CreateBlogForm = ({ blogFormRef }) => {
   const [author, setAuthor] = useState('');
   const [url, setUrl] = useState('');
 
-  const user = useSelector((state) => state.user);
+  const loggedInUser = useSelector((state) => state.loggedInUser);
   const dispatch = useDispatch();
 
   const createBlog = async (blogObject) => {
     console.log('creating a new blog:', blogObject);
 
-    blogService.setToken(user.token);
+    blogService.setToken(loggedInUser.token);
     const returnedBlog = await blogService.createBlog(blogObject);
 
     console.log('posting of a new blog succeeded', returnedBlog);

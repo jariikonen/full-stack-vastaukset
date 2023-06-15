@@ -1,61 +1,31 @@
 /* eslint-disable no-console */
-import { React, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import LoginForm from './components/LoginForm';
-import BlogList from './components/BlogList';
-import CreateBlogForm from './components/CreateBlogForm';
-import Notification from './components/Notification';
-import Togglable from './components/Togglable';
+import { React, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { initializeBlogs } from './reducers/blogsReducer';
-import { setUser, initializeUser } from './reducers/userReducer';
+import { initializeLoggedInUser } from './reducers/loggedInReducer';
+import { initializeUserList } from './reducers/userListReducer';
+import Header from './components/Header';
+import HomeView from './components/HomeView';
+import UserListView from './components/UserListView';
 
 const App = () => {
-  const blogFormRef = useRef();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(initializeBlogs());
+    dispatch(initializeLoggedInUser());
+    dispatch(initializeUserList());
   }, [dispatch]);
-
-  useEffect(() => {
-    dispatch(initializeUser());
-  }, [dispatch]);
-
-  const user = useSelector((state) => state.user);
-
-  const handleLogout = async () => {
-    console.log(`logging out user '${user.name}' ...`);
-    window.localStorage.removeItem('loggedBloglistUser');
-    dispatch(setUser(null));
-    window.location.reload();
-  };
 
   return (
-    <div>
-      {!user ? (
-        <div>
-          <h2>log in to application</h2>
-          <Notification />
-          <LoginForm />
-        </div>
-      ) : (
-        <div>
-          <h2>blogs</h2>
-          <Notification />
-          <p>
-            logged in as {user.name}{' '}
-            <button type="button" onClick={handleLogout}>
-              logout
-            </button>
-          </p>
-
-          <Togglable buttonLabel="create blog" ref={blogFormRef}>
-            <CreateBlogForm blogFormRef={blogFormRef} />
-          </Togglable>
-          <BlogList />
-        </div>
-      )}
-    </div>
+    <Router>
+      <Header />
+      <Routes>
+        <Route path="/" element={<HomeView />} />
+        <Route path="users" element={<UserListView />} />
+      </Routes>
+    </Router>
   );
 };
 

@@ -1,29 +1,29 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const userSlice = createSlice({
-  name: 'user',
+  name: 'loggedInUser',
   initialState: null,
   reducers: {
-    setUser(state, action) {
+    setLoggedInUser(state, action) {
       return action.payload;
     },
   },
 });
 
-export const { setUser } = userSlice.actions;
+export const { setLoggedInUser } = userSlice.actions;
 
-export const initializeUser = () => {
+export const initializeLoggedInUser = () => {
   return async (dispatch) => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser');
     if (loggedUserJSON) {
       const usr = JSON.parse(loggedUserJSON);
       console.log(
-        'initializing user from local storage with following object:',
+        'initializing loggedInUser from local storage with following object:',
         usr
       );
-      dispatch(setUser(usr));
+      dispatch(setLoggedInUser(usr));
     }
-    console.log('initializeUser: not logged in');
+    console.log('initializeLoggedInUser: not logged in');
   };
 };
 

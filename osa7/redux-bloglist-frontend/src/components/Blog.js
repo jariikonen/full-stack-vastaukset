@@ -7,13 +7,13 @@ const Blog = ({ blog }) => {
   const [condensed, setCondensed] = useState(true);
 
   const blogs = useSelector((state) => state.blogs);
-  const user = useSelector((state) => state.user);
+  const loggedInUser = useSelector((state) => state.loggedInUser);
   const dispatch = useDispatch();
 
   const likeBlog = async (blogObject) => {
     console.log('liking blog', blogObject);
 
-    blogService.setToken(user.token);
+    blogService.setToken(loggedInUser.token);
     const returnedBlog = await blogService.updateBlog(blogObject);
 
     console.log('liking blog succeeded', returnedBlog);
@@ -32,7 +32,7 @@ const Blog = ({ blog }) => {
     const confirmation = window.confirm(`Remove blog ${blogObject.title}?`);
 
     if (confirmation) {
-      blogService.setToken(user.token);
+      blogService.setToken(loggedInUser.token);
       await blogService.deleteBlog(blogObject.id);
 
       console.log(`removing of blog ${blogObject.id} succeeded`);
@@ -92,7 +92,7 @@ const Blog = ({ blog }) => {
         </button>
       </div>
       <div>{blog.user.name}</div>
-      {user.username === blog.user.username && (
+      {loggedInUser.username === blog.user.username && (
         <button type="button" onClick={() => removeBlog(blog)}>
           remove
         </button>
