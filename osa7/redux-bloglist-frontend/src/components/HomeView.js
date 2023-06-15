@@ -4,7 +4,7 @@ import BlogList from './BlogList';
 import CreateBlogForm from './CreateBlogForm';
 import Togglable from './Togglable';
 
-const HomeView = () => {
+const HomeView = ({ likeBlog, removeBlog }) => {
   const blogFormRef = useRef();
   const loggedInUser = useSelector((state) => state.loggedInUser);
 
@@ -14,7 +14,7 @@ const HomeView = () => {
         <Togglable buttonLabel="create blog" ref={blogFormRef}>
           <CreateBlogForm blogFormRef={blogFormRef} />
         </Togglable>
-        <BlogList />
+        <BlogList likeBlog={likeBlog} removeBlog={removeBlog} />
       </div>
     );
   }

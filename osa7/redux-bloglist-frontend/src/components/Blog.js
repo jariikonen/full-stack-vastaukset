@@ -1,47 +1,11 @@
 import { React, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import blogService from '../services/blogs';
-import { setBlogs } from '../reducers/blogsReducer';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, likeBlog, removeBlog }) => {
   const [condensed, setCondensed] = useState(true);
 
-  const blogs = useSelector((state) => state.blogs);
   const loggedInUser = useSelector((state) => state.loggedInUser);
-  const dispatch = useDispatch();
-
-  const likeBlog = async (blogObject) => {
-    console.log('liking blog', blogObject);
-
-    blogService.setToken(loggedInUser.token);
-    const returnedBlog = await blogService.updateBlog(blogObject);
-
-    console.log('liking blog succeeded', returnedBlog);
-
-    const blogArray = blogs.map((blog) =>
-      blog.id !== returnedBlog.id ? blog : returnedBlog
-    );
-    blogArray.sort((a, b) => b.likes - a.likes);
-    dispatch(setBlogs(blogArray));
-  };
-
-  const removeBlog = async (blogObject) => {
-    console.log('removing blog', blogObject.id);
-
-    // eslint-disable-next-line no-alert
-    const confirmation = window.confirm(`Remove blog ${blogObject.title}?`);
-
-    if (confirmation) {
-      blogService.setToken(loggedInUser.token);
-      await blogService.deleteBlog(blogObject.id);
-
-      console.log(`removing of blog ${blogObject.id} succeeded`);
-
-      dispatch(setBlogs(blogs.filter((blog) => blog.id !== blogObject.id)));
-    } else {
-      console.log(`removing of blog ${blogObject.id} was cancelled`);
-    }
-  };
 
   const toggleSize = () => {
     setCondensed(!condensed);
@@ -68,7 +32,9 @@ const Blog = ({ blog }) => {
   if (condensed) {
     return (
       <div className="blog" style={blogStyle}>
-        {blog.title} {blog.author}{' '}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>{' '}
         <button type="button" onClick={toggleSize}>
           view
         </button>
@@ -79,7 +45,9 @@ const Blog = ({ blog }) => {
   return (
     <div className="blog" style={blogStyle}>
       <div>
-        {blog.title} {blog.author}{' '}
+        <Link to={`/blogs/${blog.id}`}>
+          {blog.title} {blog.author}
+        </Link>{' '}
         <button type="button" onClick={toggleSize}>
           hide
         </button>

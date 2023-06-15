@@ -20,6 +20,7 @@ export const initializeBlogs = () => {
   return async (dispatch) => {
     const receivedBlogs = await blogService.getAll();
     receivedBlogs.sort((a, b) => b.likes - a.likes);
+    console.log('initializing blogs:', receivedBlogs);
     dispatch(setBlogs(receivedBlogs));
   };
 };
