@@ -1,0 +1,39 @@
+@url = http://localhost:3003/api/login
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "jikonen",
+    "password": "salasana"
+}
+
+###
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "aankka",
+    "password": "sananen"
+}
+
+###
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "epäkäyttäjä",
+    "password": "eilöydytietokannasta"
+}
+
+###
+
+POST {{url}} HTTP/1.1
+content-type: application/json
+
+{
+    "username": "terttu",
+    "password": "salainen"
+}

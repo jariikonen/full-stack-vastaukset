@@ -21,7 +21,7 @@ const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
             like
           </button>
         </div>
-        <div style={rowStyle}>{blog.user.name}</div>
+        <div style={rowStyle}>Added by {blog.user.name}</div>
         {loggedInUser.username === blog.user.username && (
           <button
             style={rowStyle}
@@ -31,6 +31,14 @@ const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
             remove
           </button>
         )}
+        <h4>comments</h4>
+        <ul>
+          {blog.comments.map((comment, index) => (
+            <li key={index} style={rowStyle}>
+              {comment}
+            </li>
+          ))}
+        </ul>
       </div>
     );
   }

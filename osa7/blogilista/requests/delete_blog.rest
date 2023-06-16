@@ -1,0 +1,26 @@
+@url = http://localhost:3003/api/blogs
+@invalidId = 3
+@validId = 63c18c7f50c9b81047861aa2
+@ownerToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imppa29uZW4iLCJpZCI6IjYzYzE4YmI4NTBjOWI4MTA0Nzg2MWE5NCIsImlhdCI6MTY3MzYyODYyOSwiZXhwIjoxNjczNjMyMjI5fQ.lLfjhfZu6uHQNHGdAs2d0tmoV8pDwcaxulXZKfQrpbQ
+@otherToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFhbmtrYSIsImlkIjoiNjNjMThiYzE1MGM5YjgxMDQ3ODYxYTk4IiwiaWF0IjoxNjczNjI5MDMxLCJleHAiOjE2NzM2MzI2MzF9.BQMdcKRbXumqO1fxX-g9JFkwhG9c88OKKdm8aBnzkYQ
+
+DELETE {{url}}/{{invalidId}} HTTP/1.1
+
+###
+
+DELETE {{url}}/{{invalidId}} HTTP/1.1
+Authorization: bearer {{ownerToken}}
+
+###
+
+DELETE {{url}}/{{validId}} HTTP/1.1
+
+###
+
+DELETE {{url}}/{{validId}} HTTP/1.1
+Authorization: bearer {{ownerToken}}
+
+###
+
+DELETE {{url}}/{{validId}} HTTP/1.1
+Authorization: bearer {{otherToken}}
