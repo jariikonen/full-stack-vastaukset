@@ -3,14 +3,6 @@ import { useSelector } from 'react-redux';
 const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
   const loggedInUser = useSelector((state) => state.loggedInUser);
 
-  const handleLike = () => {
-    likeBlog({
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-    });
-  };
-
   const rowStyle = {
     paddingLeft: 5,
     marginBottom: 5,
@@ -25,7 +17,7 @@ const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
         </div>
         <div style={rowStyle}>
           {blog.likes} likes{' '}
-          <button type="button" onClick={handleLike}>
+          <button type="button" onClick={() => likeBlog(blog)}>
             like
           </button>
         </div>

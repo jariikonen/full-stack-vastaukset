@@ -11,14 +11,6 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
     setCondensed(!condensed);
   };
 
-  const handleLike = () => {
-    likeBlog({
-      ...blog,
-      user: blog.user.id,
-      likes: blog.likes + 1,
-    });
-  };
-
   const blogStyle = {
     paddingLeft: 8,
     paddingRight: 8,
@@ -55,7 +47,7 @@ const Blog = ({ blog, likeBlog, removeBlog }) => {
       <div>{blog.url}</div>
       <div>
         likes {blog.likes}{' '}
-        <button type="button" onClick={handleLike}>
+        <button type="button" onClick={() => likeBlog(blog)}>
           like
         </button>
       </div>

@@ -1,5 +1,6 @@
 import { React, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import loginService from '../services/login';
 import { setLoggedInUser } from '../reducers/loggedInReducer';
 import { setNotification } from '../reducers/notificationReducer';
@@ -9,6 +10,7 @@ const LoginForm = () => {
   const [password, setPassword] = useState('');
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const login = async (username, password) => {
     console.log('logging in with', username, password, '...');
@@ -33,6 +35,7 @@ const LoginForm = () => {
     login(username, password);
     setUsername('');
     setPassword('');
+    navigate('/');
   };
 
   return (

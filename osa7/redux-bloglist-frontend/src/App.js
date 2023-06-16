@@ -36,11 +36,14 @@ const App = () => {
 
   const loggedInUser = useSelector((state) => state.loggedInUser);
 
-  const likeBlog = async (blogObject) => {
-    console.log('liking blog', blogObject);
+  const likeBlog = async (blog) => {
+    console.log('liking blog', blog);
 
     blogService.setToken(loggedInUser.token);
-    const returnedBlog = await blogService.updateBlog(blogObject);
+    const returnedBlog = await blogService.updateBlog({
+      ...blog,
+      likes: blog.likes + 1,
+    });
 
     console.log('liking blog succeeded', returnedBlog);
 
