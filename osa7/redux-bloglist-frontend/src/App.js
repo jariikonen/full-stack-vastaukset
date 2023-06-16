@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Routes, Route, useMatch, Navigate } from 'react-router-dom';
 import { initializeBlogs } from './reducers/blogsReducer';
 import { initializeLoggedInUser } from './reducers/loggedInReducer';
-import { initializeUserList } from './reducers/userListReducer';
+import { initializeUserList, removeUserBlog } from './reducers/userListReducer';
 import { setBlogs } from './reducers/blogsReducer';
 import Header from './components/Header';
 import HomeView from './components/HomeView';
@@ -64,6 +64,12 @@ const App = () => {
       console.log(`removing of blog ${blogObject.id} succeeded`);
 
       dispatch(setBlogs(blogs.filter((blog) => blog.id !== blogObject.id)));
+      dispatch(
+        removeUserBlog({
+          username: loggedInUser.username,
+          blogId: blogObject.id,
+        })
+      );
     } else {
       console.log(`removing of blog ${blogObject.id} was cancelled`);
     }

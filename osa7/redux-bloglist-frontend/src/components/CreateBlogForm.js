@@ -2,6 +2,7 @@ import { React, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import blogService from '../services/blogs';
 import { appendBlog } from '../reducers/blogsReducer';
+import { appendUserBlog } from '../reducers/userListReducer';
 import { setNotification } from '../reducers/notificationReducer';
 
 const CreateBlogForm = ({ blogFormRef }) => {
@@ -21,6 +22,12 @@ const CreateBlogForm = ({ blogFormRef }) => {
     console.log('posting of a new blog succeeded', returnedBlog);
 
     dispatch(appendBlog(returnedBlog));
+    dispatch(
+      appendUserBlog({
+        username: loggedInUser.username,
+        blog: returnedBlog,
+      })
+    );
     dispatch(
       setNotification(`a new blog ${returnedBlog.title} added`, 'success')
     );
