@@ -8,13 +8,24 @@ const blogsSlice = createSlice({
     appendBlog(state, action) {
       state.push(action.payload);
     },
+    appendBlogComment(state, action) {
+      const { blogId, comment } = action.payload;
+      const blogToChange = state.find((blog) => blog.id === blogId);
+      const newBlog = {
+        ...blogToChange,
+        comments: blogToChange.comments.concat(comment),
+      };
+      return state.map((blog) =>
+        blog.id !== blogToChange.id ? blog : newBlog
+      );
+    },
     setBlogs(state, action) {
       return action.payload;
     },
   },
 });
 
-export const { appendBlog, setBlogs } = blogsSlice.actions;
+export const { appendBlog, appendBlogComment, setBlogs } = blogsSlice.actions;
 
 export const initializeBlogs = () => {
   return async (dispatch) => {

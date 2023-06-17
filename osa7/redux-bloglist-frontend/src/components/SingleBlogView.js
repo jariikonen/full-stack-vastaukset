@@ -1,4 +1,5 @@
 import { useSelector } from 'react-redux';
+import CommentForm from './CommentForm';
 
 const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
   const loggedInUser = useSelector((state) => state.loggedInUser);
@@ -32,6 +33,7 @@ const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
           </button>
         )}
         <h4>comments</h4>
+        <CommentForm blogId={blog.id} />
         <ul>
           {blog.comments.map((comment, index) => (
             <li key={index} style={rowStyle}>

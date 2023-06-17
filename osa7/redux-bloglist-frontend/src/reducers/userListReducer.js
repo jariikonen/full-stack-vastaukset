@@ -19,6 +19,19 @@ const userListSlice = createSlice({
       };
       return state.map((usr) => (usr.id !== userToChange.id ? usr : newUser));
     },
+    setUserBlog(state, action) {
+      const { username, blog } = action.payload;
+      // eslint-disable-next-line no-unused-vars
+      const { user, likes, ...newBlog } = blog;
+      const userToChange = state.find((user) => user.username === username);
+      const newUser = {
+        ...userToChange,
+        blogs: userToChange.blogs.map((blog) =>
+          blog.id !== newBlog.id ? blog : newBlog
+        ),
+      };
+      return state.map((usr) => (usr.id !== userToChange.id ? usr : newUser));
+    },
     removeUserBlog(state, action) {
       const { username, blogId } = action.payload;
       const userToChange = state.find((user) => user.username === username);
@@ -31,7 +44,7 @@ const userListSlice = createSlice({
   },
 });
 
-export const { setUserList, appendUserBlog, removeUserBlog } =
+export const { setUserList, appendUserBlog, setUserBlog, removeUserBlog } =
   userListSlice.actions;
 
 export const initializeUserList = () => {
