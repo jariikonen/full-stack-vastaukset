@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Menu from './Menu';
+import Container from '@mui/material/Container';
+import MenuBar from './MenuBar';
 import Notification from './Notification';
 import LoginForm from './LoginForm';
 
@@ -9,16 +10,15 @@ const Header = () => {
 
   return (
     <div>
-      {loggedInUser && <Menu />}
+      <MenuBar />
       {!loggedInUser ? (
-        <div>
+        <Container>
           <h2>Log in to application</h2>
           <Notification />
           <LoginForm />
-        </div>
+        </Container>
       ) : (
         <div>
-          <h2>Blogs app</h2>
           <Notification />
         </div>
       )}

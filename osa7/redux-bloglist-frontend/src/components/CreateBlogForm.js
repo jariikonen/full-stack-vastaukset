@@ -1,5 +1,9 @@
 import { React, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import FormControl from '@mui/material/FormControl/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import OutlinedInput from '@mui/material/OutlinedInput';
+import Button from '@mui/material/Button';
 import blogService from '../services/blogs';
 import { appendBlog } from '../reducers/blogsReducer';
 import { appendUserBlog } from '../reducers/userListReducer';
@@ -44,45 +48,75 @@ const CreateBlogForm = ({ blogFormRef }) => {
   };
 
   return (
-    <div>
-      <h3>create new</h3>
-      <form onSubmit={handleCreate}>
-        <div>
-          <label id="title-label">title</label>{' '}
-          <input
+    <>
+      <h3>Create new blog</h3>
+      <form id="create-blog-form" onSubmit={handleCreate}>
+        <FormControl size="small" fullWidth sx={{ mb: 0.5 }}>
+          <InputLabel
+            htmlFor="title-input"
+            id="title-label"
+            sx={{ backgroundColor: 'white', px: 1, pt: 0.5 }}
+          >
+            Title
+          </InputLabel>
+          <OutlinedInput
+            id="title-input"
             aria-labelledby="title-label"
             type="text"
             value={title}
-            name="Title"
+            name="title"
             onChange={({ target }) => setTitle(target.value)}
+            sx={{ mt: 0.5, py: 0 }}
           />
-        </div>
-        <div>
-          <label id="author-label">author</label>{' '}
-          <input
+        </FormControl>
+        <FormControl size="small" fullWidth sx={{ mb: 0.5 }}>
+          <InputLabel
+            htmlFor="author-input"
+            id="author-label"
+            sx={{ backgroundColor: 'white', px: 1, pt: 0.5 }}
+          >
+            Author
+          </InputLabel>
+          <OutlinedInput
+            id="author-input"
             aria-labelledby="author-label"
             type="text"
             value={author}
-            name="Author"
+            name="author"
             onChange={({ target }) => setAuthor(target.value)}
+            sx={{ mt: 0.5, py: 0 }}
           />
-        </div>
-        <div>
-          <label id="url-label">url</label>{' '}
-          <input
+        </FormControl>
+        <FormControl size="small" fullWidth sx={{ mb: 0.5 }}>
+          <InputLabel
+            htmlFor="url-input"
+            id="url-label"
+            sx={{ backgroundColor: 'white', px: 1, pt: 0.5 }}
+          >
+            Url
+          </InputLabel>
+          <OutlinedInput
+            id="url-input"
             aria-labelledby="url-label"
             type="text"
             value={url}
-            name="Url"
+            name="url"
             onChange={({ target }) => setUrl(target.value)}
+            sx={{ mt: 0.5, py: 0 }}
           />
-        </div>
-        <button type="submit" data-cy="submit-blog">
-          create
-        </button>
-        {/* https://docs.cypress.io/guides/references/best-practices#Selecting-Elements */}
+        </FormControl>
       </form>
-    </div>
+      <Button
+        type="submit"
+        form="create-blog-form"
+        data-cy="submit-blog"
+        size="small"
+        variant="contained"
+        sx={{ mt: 0.5, mb: 2, mr: 1 }}
+      >
+        create
+      </Button>
+    </>
   );
 };
 

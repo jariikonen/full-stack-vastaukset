@@ -2,6 +2,8 @@ import { React, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import loginService from '../services/login';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
 import { setLoggedInUser } from '../reducers/loggedInReducer';
 import { setNotification } from '../reducers/notificationReducer';
 
@@ -42,28 +44,32 @@ const LoginForm = () => {
     <div>
       <form onSubmit={handleLogin}>
         <div>
-          username{' '}
-          <input
+          <TextField
+            label="username"
+            size="small"
             id="username"
             type="text"
             value={username}
             name="Username"
             onChange={({ target }) => setUsername(target.value)}
+            sx={{ mb: 0.5 }}
           />
         </div>
         <div>
-          password{' '}
-          <input
+          <TextField
+            label="password"
+            size="small"
             id="password"
             type="password"
             value={password}
             name="Password"
             onChange={({ target }) => setPassword(target.value)}
+            sx={{ mb: 0.5 }}
           />
         </div>
-        <button id="login-button" type="submit">
+        <Button variant="contained" id="login-button" type="submit">
           login
-        </button>
+        </Button>
       </form>
     </div>
   );

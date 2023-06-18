@@ -1,14 +1,14 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import Blog from './Blog';
+import BlogAccordion from './BlogAccordion';
 
 const BlogList = ({ likeBlog, removeBlog }) => {
   const blogs = useSelector((state) => state.blogs);
 
   return (
-    <div>
+    <div style={{ marginTop: 10, marginBottom: 10 }}>
       {blogs.map((blog) => (
-        <Blog
+        <BlogAccordion
           key={blog.id}
           blog={blog}
           likeBlog={likeBlog}

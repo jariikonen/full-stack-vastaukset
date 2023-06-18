@@ -1,63 +1,46 @@
-import { React, useState } from 'react';
+import { React } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import ThumbUp from '@mui/icons-material/ThumbUp';
+import Link from '@mui/material/Link';
 
 const Blog = ({ blog, likeBlog, removeBlog }) => {
-  const [condensed, setCondensed] = useState(true);
-
   const loggedInUser = useSelector((state) => state.loggedInUser);
 
-  const toggleSize = () => {
-    setCondensed(!condensed);
-  };
-
-  const blogStyle = {
-    paddingLeft: 8,
-    paddingRight: 8,
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginTop: 8,
-    marginBottom: 8,
-    background: '#E0EEEE',
-  };
-
-  if (condensed) {
-    return (
-      <div className="blog" style={blogStyle}>
-        <Link to={`/blogs/${blog.id}`}>
-          {blog.title} {blog.author}
-        </Link>{' '}
-        <button type="button" onClick={toggleSize}>
-          view
-        </button>
-      </div>
-    );
-  }
-
   return (
-    <div className="blog" style={blogStyle}>
-      <div>
-        <Link to={`/blogs/${blog.id}`}>
-          {blog.title} {blog.author}
-        </Link>{' '}
-        <button type="button" onClick={toggleSize}>
-          hide
-        </button>
-      </div>
-      <div>{blog.url}</div>
-      <div>
-        likes {blog.likes}{' '}
-        <button type="button" onClick={() => likeBlog(blog)}>
+    <>
+      <Typography sx={{ ml: 2, mb: 1 }}>
+        <Link href={blog.url} underline="hover">
+          {blog.url}
+        </Link>
+      </Typography>
+      <Typography sx={{ ml: 2, mb: 1 }}>
+        {blog.likes} likes{'    '}
+        <Button
+          type="button"
+          variant="outlined"
+          endIcon={<ThumbUp />}
+          size="small"
+          onClick={() => likeBlog(blog)}
+          sx={{ borderRadius: 8 }}
+        >
           like
-        </button>
-      </div>
-      <div>{blog.user.name}</div>
+        </Button>
+      </Typography>
+      <Typography sx={{ ml: 2, mb: 1 }}>Added by {blog.user.name}</Typography>
       {loggedInUser.username === blog.user.username && (
-        <button type="button" onClick={() => removeBlog(blog)}>
+        <Button
+          type="button"
+          variant="outlined"
+          size="small"
+          onClick={() => removeBlog(blog)}
+          sx={{ ml: 2, mb: 1 }}
+        >
           remove
-        </button>
+        </Button>
       )}
-    </div>
+    </>
   );
 };
 

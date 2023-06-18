@@ -48,7 +48,7 @@ describe('Blog app', function () {
       cy.get('#password').type(testUsers[0].password);
       cy.get('#login-button').click();
 
-      cy.contains(`logged in as ${testUsers[0].name}`);
+      cy.contains('TT');
     });
 
     it('fails with wrong credentials', function () {
@@ -68,9 +68,9 @@ describe('Blog app', function () {
 
     it('A blog can be created', function () {
       cy.get('button').contains('create blog').click();
-      cy.get('input[name="Title"]').type(testBlogs[0].title);
-      cy.get('input[name="Author"]').type(testBlogs[0].author);
-      cy.get('input[name="Url"]').type(testBlogs[0].url);
+      cy.get('input[name="title"]').type(testBlogs[0].title);
+      cy.get('input[name="author"]').type(testBlogs[0].author);
+      cy.get('input[name="url"]').type(testBlogs[0].url);
       cy.get('[data-cy="submit-blog"]').click();
 
       cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`);
@@ -81,6 +81,7 @@ describe('Blog app', function () {
         cy.postBlog(testBlogs[0]);
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
           .parent()
+          .parent()
           .find('button')
           .contains('view')
           .click();
@@ -90,16 +91,18 @@ describe('Blog app', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
           .parent()
           .parent()
+          .parent()
           .as('theBlog')
           .find('button')
           .contains('like')
           .click();
 
-        cy.get('@theBlog').contains('likes 1');
+        cy.get('@theBlog').contains('1 likes');
       });
 
       it('A blog can be removed by the user who created it', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
+          .parent()
           .parent()
           .parent()
           .find('button')
@@ -116,11 +119,13 @@ describe('Blog app', function () {
         cy.contains(`${testBlogs[0].title} ${testBlogs[0].author}`)
           .parent()
           .parent()
+          .parent()
           .as('theBlog');
         cy.get('@theBlog').contains(`${testUsers[0].name}`);
         cy.get('@theBlog').find('button').contains('remove');
 
-        cy.get('button').contains('logout').click();
+        cy.get('button').contains('TT').click();
+        cy.get('a').contains('logout').click();
         cy.login(testUsers[1].username, testUsers[1].password);
         cy.get('@theBlog').find('button').contains('view').click();
 

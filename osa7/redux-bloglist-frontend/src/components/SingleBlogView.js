@@ -1,4 +1,7 @@
 import { useSelector } from 'react-redux';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import Blog from './Blog';
 import CommentForm from './CommentForm';
 
 const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
@@ -13,34 +16,16 @@ const SingleBlogView = ({ blog, likeBlog, removeBlog }) => {
     return (
       <div>
         <h2>{blog.title}</h2>
-        <div style={rowStyle}>
-          <a href={blog.url}>{blog.url}</a>
-        </div>
-        <div style={rowStyle}>
-          {blog.likes} likes{' '}
-          <button type="button" onClick={() => likeBlog(blog)}>
-            like
-          </button>
-        </div>
-        <div style={rowStyle}>Added by {blog.user.name}</div>
-        {loggedInUser.username === blog.user.username && (
-          <button
-            style={rowStyle}
-            type="button"
-            onClick={() => removeBlog(blog)}
-          >
-            remove
-          </button>
-        )}
-        <h4>comments</h4>
+        <Blog blog={blog} likeBlog={likeBlog} removeBlog={removeBlog} />
+        <h4>Comments</h4>
         <CommentForm blogId={blog.id} />
-        <ul>
+        <List dense>
           {blog.comments.map((comment, index) => (
-            <li key={index} style={rowStyle}>
+            <ListItem key={index} style={rowStyle}>
               {comment}
-            </li>
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </div>
     );
   }

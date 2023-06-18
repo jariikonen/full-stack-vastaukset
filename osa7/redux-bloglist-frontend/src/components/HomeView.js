@@ -11,7 +11,8 @@ const HomeView = ({ likeBlog, removeBlog }) => {
   if (loggedInUser) {
     return (
       <div>
-        <Togglable buttonLabel="create blog" ref={blogFormRef}>
+        <h2>Blogs</h2>
+        <Togglable buttonLabel="+ create blog" ref={blogFormRef}>
           <CreateBlogForm blogFormRef={blogFormRef} />
         </Togglable>
         <BlogList likeBlog={likeBlog} removeBlog={removeBlog} />

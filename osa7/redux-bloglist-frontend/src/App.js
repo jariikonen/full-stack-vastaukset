@@ -2,6 +2,7 @@
 import { React, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Routes, Route, useMatch, Navigate } from 'react-router-dom';
+import { Container, CssBaseline } from '@mui/material';
 import { initializeBlogs } from './reducers/blogsReducer';
 import { initializeLoggedInUser } from './reducers/loggedInReducer';
 import { initializeUserList, removeUserBlog } from './reducers/userListReducer';
@@ -79,28 +80,31 @@ const App = () => {
   };
 
   return (
-    <div>
+    <Container disableGutters={true} maxWidth="xl">
+      <CssBaseline />
       <Header />
-      <Routes>
-        <Route
-          path="/"
-          element={<HomeView likeBlog={likeBlog} removeBlog={removeBlog} />}
-        />
-        <Route path="/users" element={<UserListView />} />
-        <Route path="/users/:id" element={<SingleUserView user={user} />} />
-        <Route
-          path="/blogs/:id"
-          element={
-            <SingleBlogView
-              blog={blog}
-              likeBlog={likeBlog}
-              removeBlog={removeBlog}
-            />
-          }
-        />
-        <Route path="/blogs" element={<Navigate replace to="/" />} />
-      </Routes>
-    </div>
+      <Container>
+        <Routes>
+          <Route
+            path="/"
+            element={<HomeView likeBlog={likeBlog} removeBlog={removeBlog} />}
+          />
+          <Route path="/users" element={<UserListView />} />
+          <Route path="/users/:id" element={<SingleUserView user={user} />} />
+          <Route
+            path="/blogs/:id"
+            element={
+              <SingleBlogView
+                blog={blog}
+                likeBlog={likeBlog}
+                removeBlog={removeBlog}
+              />
+            }
+          />
+          <Route path="/blogs" element={<Navigate replace to="/" />} />
+        </Routes>
+      </Container>
+    </Container>
   );
 };
 
