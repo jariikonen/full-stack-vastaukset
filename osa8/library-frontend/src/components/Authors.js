@@ -1,8 +1,18 @@
-import { useQuery } from '@apollo/client';
-import { ALL_AUTHORS } from '../queries';
+import { React, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client';
+import { ALL_AUTHORS, EDIT_AUTHOR } from '../queries';
 
 const Authors = (props) => {
   const result = useQuery(ALL_AUTHORS);
+  const [editAuthor, mutationResult] = useMutation(EDIT_AUTHOR, {
+    refetchQueries: [{ query: ALL_AUTHORS }],
+  });
+
+  useEffect(() => {
+    if (mutationResult.data && mutationResult.data.editAuthor === null) {
+      console.log('person not found');
+    }
+  }, [mutationResult.data]);
 
   if (!props.show) {
     return null;
@@ -13,6 +23,20 @@ const Authors = (props) => {
   }
 
   const authors = result.data.allAuthors;
+
+  const submit = (event) => {
+    event.preventDefault();
+
+    const variables = {
+      name: event.target.name.value,
+      born: Number(event.target.born.value),
+    };
+    console.log('edit author...', variables);
+    editAuthor({ variables });
+
+    event.target.name.value = '';
+    event.target.born.value = '';
+  };
 
   return (
     <div>
@@ -33,6 +57,16 @@ const Authors = (props) => {
           ))}
         </tbody>
       </table>
+      <h3>Set birthyear</h3>
+      <form onSubmit={submit}>
+        <div>
+          name <input name="name" />
+        </div>
+        <div>
+          born <input name="born" />
+        </div>
+        <button type="submit">update author</button>
+      </form>
     </div>
   );
 };
