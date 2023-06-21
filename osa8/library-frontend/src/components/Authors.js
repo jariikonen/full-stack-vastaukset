@@ -34,7 +34,7 @@ const Authors = (props) => {
     console.log('edit author...', variables);
     editAuthor({ variables });
 
-    event.target.name.value = '';
+    event.target.name.value = authors[0].name;
     event.target.born.value = '';
   };
 
@@ -59,9 +59,14 @@ const Authors = (props) => {
       </table>
       <h3>Set birthyear</h3>
       <form onSubmit={submit}>
-        <div>
-          name <input name="name" />
-        </div>
+        name{' '}
+        <select name="name" defaultValue={authors[0].name}>
+          {authors.map((a) => (
+            <option key={a.id} value={a.name}>
+              {a.name}
+            </option>
+          ))}
+        </select>
         <div>
           born <input name="born" />
         </div>
