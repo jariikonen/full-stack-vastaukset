@@ -1,11 +1,13 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
 const { GraphQLError } = require('graphql');
+const jwt = require('jsonwebtoken');
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 const Book = require('./models/book');
 const Author = require('./models/author');
+const User = require('./models/user');
 
 require('dotenv').config();
 
@@ -39,11 +41,22 @@ const typeDefs = `
     id: ID!
   }
 
+  type User {
+    username: String!
+    favoriteGenre: String!
+    id: ID!
+  }
+
+  type Token {
+    value: String!
+  }
+
   type Query {
     authorCount: Int!
     bookCount: Int!
     allBooks(author: String, genre: String): [Book!]!
     allAuthors: [Author!]!
+    me: User
   }
 
   type Mutation {
@@ -53,11 +66,18 @@ const typeDefs = `
       author: String!
       genres: [String!]!
     ): Book!
-
     editAuthor(
       name: String!
       setBornTo: Int!
     ): Author
+    createUser(
+      username: String!
+      favoriteGenre: String!
+    ): User
+    login(
+      username: String!
+      password: String!
+    ): Token
   }
 `;
 
@@ -89,9 +109,23 @@ const resolvers = {
       return booksToReturn;
     },
     allAuthors: async () => await Author.find({}),
+    me: (root, args, context) => {
+      return context.currentUser;
+    },
   },
   Mutation: {
-    addBook: async (root, args) => {
+    addBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError(
+          'This action is permitted only for authenticated users',
+          {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+            },
+          }
+        );
+      }
+
       if (args.title.length < 5) {
         throw new GraphQLError(
           'Title too short (must be at least 5 characters long)',
@@ -125,7 +159,18 @@ const resolvers = {
       await book.populate('author', { name: 1, id: 1 });
       return await book.save();
     },
-    editAuthor: async (root, args) => {
+    editAuthor: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError(
+          'This action is permitted only for authenticated users',
+          {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+            },
+          }
+        );
+      }
+
       const author = await Author.findOne({ name: args.name });
       if (author) {
         const newAuthor = { name: author.name, born: args.setBornTo };
@@ -141,6 +186,39 @@ const resolvers = {
       }
       return null;
     },
+    createUser: async (root, args) => {
+      const user = new User({
+        username: args.username,
+        favoriteGenre: args.favoriteGenre,
+      });
+
+      return user.save().catch((error) => {
+        throw new GraphQLError('Creating the user failed', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+            error,
+          },
+        });
+      });
+    },
+    login: async (root, args) => {
+      const user = await User.findOne({ username: args.username });
+
+      if (!user || args.password !== 'secret') {
+        throw new GraphQLError('wrong credentials', {
+          extensions: {
+            code: 'BAD_USER_INPUT',
+          },
+        });
+      }
+
+      const userForToken = {
+        username: user.username,
+        id: user._id,
+      };
+
+      return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+    },
   },
 };
 
@@ -150,7 +228,18 @@ const server = new ApolloServer({
 });
 
 startStandaloneServer(server, {
-  listen: { port: PORT },
+  listen: { port: PORT || 4000 },
+  context: async ({ req, res }) => {
+    const auth = req ? req.headers.authorization : null;
+    if (auth && auth.startsWith('Bearer ')) {
+      const decodedToken = jwt.verify(
+        auth.substring(7),
+        process.env.JWT_SECRET
+      );
+      const currentUser = await User.findById(decodedToken.id);
+      return { currentUser };
+    }
+  },
 }).then(({ url }) => {
   console.log(`Server ready at ${url}`);
 });
