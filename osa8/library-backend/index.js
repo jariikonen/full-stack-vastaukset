@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server');
 const { startStandaloneServer } = require('@apollo/server/standalone');
+const { GraphQLError } = require('graphql');
 
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
@@ -91,6 +92,29 @@ const resolvers = {
   },
   Mutation: {
     addBook: async (root, args) => {
+      if (args.title.length < 5) {
+        throw new GraphQLError(
+          'Title too short (must be at least 5 characters long)',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.title,
+            },
+          }
+        );
+      }
+      if (args.author.length < 4) {
+        throw new GraphQLError(
+          'Author name too short (must be at least 4 characters long)',
+          {
+            extensions: {
+              code: 'BAD_USER_INPUT',
+              invalidArgs: args.author,
+            },
+          }
+        );
+      }
+
       let author = await Author.findOne({ name: args.author });
       if (!author) {
         author = new Author({ name: args.author });
