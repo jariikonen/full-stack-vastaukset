@@ -31,7 +31,7 @@ const Authors = (props) => {
       name: event.target.name.value,
       born: Number(event.target.born.value),
     };
-    console.log('edit author...', variables);
+    console.log('edit author:', variables);
     editAuthor({ variables });
 
     event.target.name.value = authors[0].name;
