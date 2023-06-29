@@ -2,16 +2,14 @@ import { useEffect, useState } from 'react';
 import { useQuery } from '@apollo/client';
 import { ALL_BOOKS } from '../queries';
 
-const Books = (props) => {
-  const [allBooks, setAllBooks] = useState([]);
+const Books = ({ show, allBooksResult, allBooks }) => {
   const [booksToShow, setBooksToShow] = useState([]);
   const [genres, setGenres] = useState([]);
 
-  const allBooksResult = useQuery(ALL_BOOKS, {
-    onCompleted: (data) => setAllBooks(data.allBooks),
-  });
   const filteredBooksResult = useQuery(ALL_BOOKS, {
-    onCompleted: (data) => setBooksToShow(data.allBooks),
+    onCompleted: (data) => {
+      setBooksToShow(data.allBooks);
+    },
   });
 
   useEffect(() => {
@@ -26,7 +24,7 @@ const Books = (props) => {
     setBooksToShow(allBooks);
   }, [allBooks]);
 
-  if (!props.show) {
+  if (!show) {
     return null;
   }
 

@@ -1,26 +1,45 @@
 import { useEffect, useState } from 'react';
-import { useApolloClient } from '@apollo/client';
+import { useApolloClient, useQuery } from '@apollo/client';
+import { ALL_BOOKS, ME } from './queries';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
 import LoginForm from './components/LoginForm';
 import Error from './components/Error';
+import Recommend from './components/Recommend';
 
 const App = () => {
   const [page, setPage] = useState('authors');
   const [token, setToken] = useState(null);
   const [error, setError] = useState(null);
   const client = useApolloClient();
+  const [allBooks, setAllBooks] = useState([]);
+  const [me, setMe] = useState(null);
+
+  const allBooksResult = useQuery(ALL_BOOKS, {
+    onCompleted: (data) => {
+      setAllBooks(data.allBooks);
+    },
+  });
+
+  useQuery(ME, {
+    pollInterval: 2000,
+    onCompleted: (data) => {
+      if (!me && data.me) {
+        console.log('setting me:', data.me);
+        setMe(data.me);
+      }
+    },
+  });
 
   useEffect(() => {
     if (!token) {
-      const tokenFromStorage =
-        window.localStorage.getItem('library-user-token');
-      if (tokenFromStorage) {
-        setToken(tokenFromStorage);
-        console.log(`App: useEffect: logged in with token ${tokenFromStorage}`);
+      const tokenFromLS = window.localStorage.getItem('library-user-token');
+      if (tokenFromLS) {
+        setToken(tokenFromLS);
+        console.log(`logged in with token ${tokenFromLS}`);
       } else {
-        console.log('App: useEffect: not logged in');
+        console.log('not logged in');
       }
     }
   }, [token]);
@@ -36,6 +55,7 @@ const App = () => {
     setToken(null);
     localStorage.clear();
     client.resetStore();
+    setMe(null);
     setPage('authors');
   };
 
@@ -47,6 +67,7 @@ const App = () => {
         {token && (
           <>
             <button onClick={() => setPage('add')}>add book</button>
+            <button onClick={() => setPage('recommend')}>recommend</button>
             <button onClick={logout}>logout</button>
           </>
         )}
@@ -64,12 +85,23 @@ const App = () => {
 
       <Authors show={page === 'authors'} token={token} />
 
-      <Books show={page === 'books'} />
+      <Books
+        show={page === 'books'}
+        allBooksResult={allBooksResult}
+        allBooks={allBooks}
+      />
 
       <NewBook
         show={page === 'add'}
         displayError={displayError}
         setPage={setPage}
+      />
+
+      <Recommend
+        show={page === 'recommend'}
+        allBooksResult={allBooksResult}
+        allBooks={allBooks}
+        me={me}
       />
     </div>
   );
