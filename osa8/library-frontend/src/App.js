@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
-import { ALL_BOOKS, ME, BOOK_ADDED } from './queries';
+import { ALL_BOOKS, ME, BOOK_ADDED, ALL_AUTHORS } from './queries';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
@@ -44,11 +44,38 @@ const App = () => {
     }
   }, [token]);
 
+  const updateAuthorCache = (cache, query, author) => {
+    // helper that is used to eliminate saving same author twice
+    const uniqByName = (a) => {
+      let seen = new Set();
+      return a.filter((item) => {
+        let k = item.name;
+        return seen.has(k) ? false : seen.add(k);
+      });
+    };
+
+    cache.updateQuery(query, ({ allAuthors }) => {
+      return {
+        allAuthors: uniqByName(allAuthors.concat(author)),
+      };
+    });
+  };
+
   useSubscription(BOOK_ADDED, {
     onData: ({ data }) => {
-      console.log(data);
+      const addedBook = data.data.bookAdded;
+      data = null;
+
+      client.cache.updateQuery({ query: ALL_BOOKS }, ({ allBooks }) => {
+        return {
+          allBooks: allBooks.concat(addedBook),
+        };
+      });
+
+      updateAuthorCache(client.cache, { query: ALL_AUTHORS }, addedBook.author);
+
       window.alert(
-        `New book added!\n${data.data.bookAdded.title}\nby ${data.data.bookAdded.author.name}`
+        `New book added!\n${addedBook.title}\nby ${addedBook.author.name}`
       );
     },
   });

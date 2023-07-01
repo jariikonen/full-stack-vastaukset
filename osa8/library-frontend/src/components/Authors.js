@@ -64,7 +64,7 @@ const Authors = (props) => {
             name{' '}
             <select name="name" defaultValue={authors[0].name}>
               {authors.map((a) => (
-                <option key={a.id} value={a.name}>
+                <option key={a.name} value={a.name}>
                   {a.name}
                 </option>
               ))}
