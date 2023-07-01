@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { useApolloClient, useQuery } from '@apollo/client';
-import { ALL_BOOKS, ME } from './queries';
+import { useApolloClient, useQuery, useSubscription } from '@apollo/client';
+import { ALL_BOOKS, ME, BOOK_ADDED } from './queries';
 import Authors from './components/Authors';
 import Books from './components/Books';
 import NewBook from './components/NewBook';
@@ -43,6 +43,15 @@ const App = () => {
       }
     }
   }, [token]);
+
+  useSubscription(BOOK_ADDED, {
+    onData: ({ data }) => {
+      console.log(data);
+      window.alert(
+        `New book added!\n${data.data.bookAdded.title}\nby ${data.data.bookAdded.author.name}`
+      );
+    },
+  });
 
   const displayError = (message) => {
     setError(message);
