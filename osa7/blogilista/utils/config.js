@@ -1,4 +1,11 @@
-require('dotenv').config();
+const fs = require('fs');
+
+if (fs.existsSync('.env.local')) {
+  require('dotenv').config({ path: '.env.local', override: true }); // eslint-disable-line
+} else {
+  require('dotenv').config(); // eslint-disable-line
+}
+
 const logger = require('./logger');
 
 const { NODE_ENV, PORT } = process.env;
