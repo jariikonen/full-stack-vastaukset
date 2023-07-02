@@ -5,22 +5,31 @@ const Author = require('./models/author');
 const User = require('./models/user');
 
 const { PubSub } = require('graphql-subscriptions');
+const author = require('./models/author');
 const pubsub = new PubSub();
 
 const resolvers = {
   Author: {
     bookCount: async (root) => {
-      const booksByAuthor = await Book.find({ author: root.id });
-      return booksByAuthor.length;
+      return root.books.length;
     },
   },
   Query: {
-    authorCount: async () => Author.collection.countDocuments(),
-    bookCount: async () => Book.collection.countDocuments(),
+    authorCount: async () => {
+      const authorCount = Author.collection.countDocuments();
+      return authorCount;
+    },
+    bookCount: async () => {
+      const bookCount = Book.collection.countDocuments();
+      return bookCount;
+    },
     allBooks: async (root, args) => {
-      let booksToReturn = await Book.find({}).populate('author', {
-        name: 1,
-        id: 1,
+      let booksToReturn = await Book.find({}).populate({
+        path: 'author',
+        populate: {
+          path: 'books',
+          model: 'Book',
+        },
       });
       if (args.author) {
         booksToReturn = booksToReturn.filter(
@@ -34,7 +43,10 @@ const resolvers = {
       }
       return booksToReturn;
     },
-    allAuthors: async () => await Author.find({}),
+    allAuthors: async () => {
+      const authors = await Author.find({}).populate('books');
+      return authors;
+    },
     me: (root, args, context) => {
       return context.currentUser;
     },
@@ -77,24 +89,26 @@ const resolvers = {
 
       let author = await Author.findOne({ name: args.author });
       if (!author) {
-        author = new Author({ name: args.author });
+        author = new Author({
+          name: args.author,
+          books: [],
+        });
         author = await author.save();
       }
 
       const book = new Book({ ...args, author: author.id });
-      await book.populate('author', { name: 1, id: 1 });
+      await book.save();
 
-      try {
-        await book.save();
-      } catch (error) {
-        throw new GraphQLError('Saving book failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            invalidArgs: args,
-            error,
-          },
-        });
-      }
+      author.books.push(book.id);
+      await author.save();
+
+      await book.populate({
+        path: 'author',
+        populate: {
+          path: 'books',
+          model: 'Book',
+        },
+      });
 
       pubsub.publish('BOOK_ADDED', { bookAdded: book });
 
@@ -114,18 +128,28 @@ const resolvers = {
 
       const author = await Author.findOne({ name: args.name });
       if (author) {
-        const newAuthor = { name: author.name, born: args.setBornTo };
-        const updatedAuthor = await Author.findByIdAndUpdate(
-          author.id,
-          newAuthor,
-          {
-            new: true,
-            runValidators: true,
-          }
-        );
-        return updatedAuthor;
+        author.born = args.setBornTo;
+        await author.save();
+        return author;
       }
       return null;
+    },
+    addAuthorBook: async (root, args, context) => {
+      if (!context.currentUser) {
+        throw new GraphQLError(
+          'This action is permitted only for authenticated users',
+          {
+            extensions: {
+              code: 'UNAUTHENTICATED',
+            },
+          }
+        );
+      }
+
+      const authorToUpdate = await Author.findById(args.authorId);
+      authorToUpdate.books.push(args.bookId);
+      const updatedAuthor = await authorToUpdate.save();
+      return updatedAuthor;
     },
     createUser: async (root, args) => {
       const user = new User({

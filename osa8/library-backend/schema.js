@@ -3,6 +3,7 @@ const typeDefs = `
     name: String!
     born: Int
     bookCount: Int!
+    books: [String!]
     id: ID!
   }
 
@@ -51,6 +52,10 @@ const typeDefs = `
       username: String!
       password: String!
     ): Token
+    addAuthorBook(
+      authorId: ID!
+      bookId: ID!
+    ): Author
   }
 
   type Subscription {
