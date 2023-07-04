@@ -53,4 +53,34 @@ const calculateExercises = (
   };
 };
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2));
+interface ExerciseValues {
+  target: number;
+  hours: number[];
+}
+
+const parseExerciseArguments = (args: string[]): ExerciseValues => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const [target, ...hours] = args.slice(2);
+  const fouls = hours.filter((h) => isNaN(Number(h)));
+
+  if (!isNaN(Number(target)) && fouls.length === 0) {
+    return {
+      target: Number(target),
+      hours: hours.map((h) => Number(h)),
+    };
+  } else {
+    throw new Error('Provided values were not numbers!');
+  }
+};
+
+try {
+  const { target, hours } = parseExerciseArguments(process.argv);
+  console.log(calculateExercises(hours, target));
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.';
+  if (error instanceof Error) {
+    errorMessage += ' Error: ' + error.message;
+  }
+  console.log(errorMessage);
+}
