@@ -1,6 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import express from "express";
 import patientService from "../services/patient";
+import toNewPatientEntry from "../utils";
 
 const router = express.Router();
 
@@ -9,15 +9,17 @@ router.get("/", (_req, res) => {
 });
 
 router.post("/", (req, res) => {
-  const { name, dateOfBirth, gender, occupation, ssn } = req.body;
-  const addedEntry = patientService.addPatient({
-    name,
-    dateOfBirth,
-    gender,
-    occupation,
-    ssn,
-  });
-  res.json(addedEntry);
+  try {
+    const newPatientEntry = toNewPatientEntry(req.body);
+    const addedEntry = patientService.addPatient(newPatientEntry);
+    res.json(addedEntry);
+  } catch (error: unknown) {
+    let errorMessage = "Something went wrong.";
+    if (error instanceof Error) {
+      errorMessage += " Error: " + error.message;
+    }
+    res.status(400).send(errorMessage);
+  }
 });
 
 export default router;
