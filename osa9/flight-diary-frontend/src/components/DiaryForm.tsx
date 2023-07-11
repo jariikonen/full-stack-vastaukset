@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DiaryEntry } from "../types";
+import { DiaryEntry, Weather, Visibility } from "../types";
 import { isAxiosError } from "axios";
 import diaryService from "../services/diary";
 
@@ -42,9 +42,9 @@ const DiaryForm = (props: DiaryFormProps): JSX.Element => {
       .createEntry(newEntry)
       .then((receivedEntry: DiaryEntry) => {
         props.setDiaries(props.diaries.concat(receivedEntry));
-        target.date.value = "";
-        target.weather.value = "";
-        target.visibility.value = "";
+        target.date.value = new Date().toJSON().slice(0, 10);
+        target.weather.value = "sunny";
+        target.visibility.value = "ok";
         target.comment.value = "";
       })
       .catch((error) => {
@@ -65,6 +65,8 @@ const DiaryForm = (props: DiaryFormProps): JSX.Element => {
       });
   }
 
+  const currentDate = new Date().toJSON().slice(0, 10);
+
   return (
     <>
       <h2>Add new entry</h2>
@@ -74,17 +76,39 @@ const DiaryForm = (props: DiaryFormProps): JSX.Element => {
       <form onSubmit={addNewEntry}>
         <div>
           <label>
-            date: <input type="text" name="date" />
+            date: <input type="date" name="date" defaultValue={currentDate} />
           </label>
         </div>
         <div>
           <label>
-            weather: <input type="text" name="weather" />
+            weather:{" "}
+            {(Object.keys(Weather) as (keyof typeof Weather)[]).map((key) => {
+              let checked = false;
+              if (key === "Sunny") {
+                checked = true;
+              }
+              return (
+              <label key={key}>
+                {Weather[key]}{" "}
+                <input type="radio" name="weather" value={Weather[key]} defaultChecked={checked} />
+              </label>
+            )})}
           </label>
         </div>
         <div>
           <label>
-            visibility: <input type="text" name="visibility" />
+            visibility:{" "}
+            {(Object.keys(Visibility) as (keyof typeof Visibility)[]).map((key) => {
+              let checked = false;
+              if (key === "Ok") {
+                checked = true;
+              }
+              return (
+              <label key={Visibility[key]}>
+                {Visibility[key]}{" "}
+                <input type="radio" name="visibility" value={Visibility[key]} defaultChecked={checked} />
+              </label>
+            )})}
           </label>
         </div>
         <div>
