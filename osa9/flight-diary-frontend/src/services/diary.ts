@@ -14,6 +14,11 @@ const getAll = async (): Promise<DiaryEntry[]> => {
   return entries;
 };
 
+const createEntry = (entry: object): Promise<DiaryEntry> => {
+  return axios.post(baseUrl, entry).then((response) => response.data);
+};
+
 export default {
   getAll,
+  createEntry,
 };

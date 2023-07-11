@@ -8,10 +8,11 @@ const DiaryList = (props: DiaryListProps): JSX.Element => (
   <>
     <h2>Diary entries</h2>
     {props.diaries.map((diary) =>
-      <div key={diary.date}>
+      <div key={diary.id}>
         <h3>{diary.date}</h3>
-        <p>visibility: {diary.visibility}</p>
-        <p>weather: {diary.weather}</p>
+        <div>weather: {diary.weather}</div>
+        <div>visibility: {diary.visibility}</div>
+        <div>comment: {diary.comment}</div>
       </div>    
     )}
   </>
