@@ -6,17 +6,19 @@ import TransgenderIcon from '@mui/icons-material/Transgender';
 import { Patient, Gender } from "../../types";
 import { defaultPatient } from "../../utils";
 import patientService from "../../services/patients";
+import EntryList from "./EntryList";
 
 interface Props {
   patientId: string;
 }
 
-const PatientDataPage = ({ patientId }: Props) => {
+const PatientData = ({ patientId }: Props) => {
   const [patient, setPatient] = useState<Patient>(defaultPatient);
 
   useEffect(() => {
     const fetchPatient = async (id: string) => {
       const patient = await patientService.getPatient(id);
+      console.log(patient);
       setPatient(patient);
     };
     void fetchPatient(patientId);
@@ -44,8 +46,10 @@ const PatientDataPage = ({ patientId }: Props) => {
       <Typography align="left" variant="body1" style={{ marginTop: 0 }}>
           occupation: {patient.occupation}
       </Typography>
+
+      <EntryList entries={patient.entries} />
     </Box>
 );
 };
 
-export default PatientDataPage;
+export default PatientData;
