@@ -3,9 +3,10 @@ import { Box, Typography } from "@mui/material";
 import FemaleIcon from '@mui/icons-material/Female';
 import MaleIcon from '@mui/icons-material/Male';
 import TransgenderIcon from '@mui/icons-material/Transgender';
-import { Patient, Gender } from "../../types";
+import { Patient, Gender, DiagnosisEntry } from "../../types";
 import { defaultPatient } from "../../utils";
 import patientService from "../../services/patients";
+import diagnosesService from "../../services/diagnoses";
 import EntryList from "./EntryList";
 
 interface Props {
@@ -14,6 +15,7 @@ interface Props {
 
 const PatientData = ({ patientId }: Props) => {
   const [patient, setPatient] = useState<Patient>(defaultPatient);
+  const [diagnoses, setDiagnoses] = useState<DiagnosisEntry[]>([]);
 
   useEffect(() => {
     const fetchPatient = async (id: string) => {
@@ -23,6 +25,14 @@ const PatientData = ({ patientId }: Props) => {
     };
     void fetchPatient(patientId);
   }, [patientId]);
+
+  useEffect(() => {
+    const fetchDiagnosisDescriptions = async () => {
+      const diagnoses = await diagnosesService.getAll();
+      setDiagnoses(diagnoses);
+    };
+    fetchDiagnosisDescriptions();
+  }, []);
 
   const renderGender = (gender: Gender) => {
     switch (gender) {
@@ -47,7 +57,7 @@ const PatientData = ({ patientId }: Props) => {
           occupation: {patient.occupation}
       </Typography>
 
-      <EntryList entries={patient.entries} />
+      <EntryList entries={patient.entries} diagnoses={diagnoses} />
     </Box>
 );
 };
