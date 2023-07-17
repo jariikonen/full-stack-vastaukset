@@ -141,7 +141,7 @@ const assertNever = (value: never): never => {
   );
 };
 
-const toNewEntry = (object: unknown): NewEntry => {
+export const toNewEntry = (object: unknown): NewEntry => {
   if (!object || typeof object !== "object") {
     throw new Error("Missing or incorrect entry.");
   }
@@ -166,7 +166,7 @@ const toNewEntry = (object: unknown): NewEntry => {
   throw new Error("Incorrect data: a field is missing.");
 };
 
-const toNewPatientEntry = (object: unknown): NewPatientEntry => {
+export const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   if (!object || typeof object !== "object") {
     throw new Error("Incorrect or missing data.");
   }
@@ -174,37 +174,41 @@ const toNewPatientEntry = (object: unknown): NewPatientEntry => {
   if (
     "name" in object &&
     "dateOfBirth" in object &&
-    "ssn" in object &&
     "gender" in object &&
-    "occupation" in object &&
-    "entries" in object
+    "occupation" in object
   ) {
-    if (!Array.isArray(object.entries)) {
-      throw new Error("Incorrect entries: not an array");
-    }
-
-    const entries: Entry[] = object.entries.map((e: unknown) => {
-      const entry = toNewEntry(e) as Entry;
-      if (!e || typeof e !== "object" || !("id" in e)) {
-        throw new Error("Incorrect entry: missing id");
-      }
-      entry.id = e.id as string;
-      return entry;
-    });
-
     const newEntry: NewPatientEntry = {
       name: parseStringField(object.name, "name"),
       dateOfBirth: parseDate(object.dateOfBirth),
-      ssn: parseStringField(object.ssn, "ssn"),
       gender: parseGender(object.gender),
       occupation: parseStringField(object.occupation, "occupation"),
-      entries: entries,
     };
+
+    if ("ssn" in object) {
+      newEntry.ssn = parseStringField(object.ssn, "ssn");
+    }
+
+    if ("entries" in object) {
+      if (!Array.isArray(object.entries)) {
+        throw new Error("Incorrect entries field: not an array");
+      }
+
+      const entries: Entry[] = object.entries.map((e: unknown) => {
+        const entry = toNewEntry(e) as Entry;
+        if (!e || typeof e !== "object" || !("id" in e)) {
+          throw new Error("Incorrect entry: missing id");
+        }
+        entry.id = e.id as string; // EI TARKISTETA
+        return entry;
+      });
+
+      newEntry.entries = entries;
+    } else {
+      newEntry.entries = [];
+    }
 
     return newEntry;
   }
 
   throw new Error("Incorrect data: a field is missing.");
 };
-
-export default toNewPatientEntry;
