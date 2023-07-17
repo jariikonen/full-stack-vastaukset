@@ -4,6 +4,7 @@ import {
   PatientEntry,
   NonSensitivePatientEntry,
   NewPatientEntry,
+  NewEntry,
 } from "../types";
 
 const getEntries = (): PatientEntry[] => {
@@ -34,9 +35,34 @@ const addPatient = (entry: NewPatientEntry): PatientEntry => {
   return newPatientEntry;
 };
 
+const addEntry = (patientId: string, entry: NewEntry): PatientEntry => {
+  if (!patients.find((patient) => patient.id === patientId)) {
+    throw new Error("Patient not found");
+  }
+
+  const newEntry = {
+    id: uuid(),
+    ...entry,
+  };
+
+  patients.forEach((p) => {
+    if (p.id === patientId) {
+      p.entries ? p.entries.push(newEntry) : (p.entries = [newEntry]);
+    }
+  });
+
+  const updatedPatientEntry = patients.find((p) => p.id === patientId);
+  if (!updatedPatientEntry) {
+    throw new Error("Internal server error");
+  }
+
+  return updatedPatientEntry;
+};
+
 export default {
   getEntries,
   getNonSensitiveEntries,
   findById,
   addPatient,
+  addEntry,
 };
