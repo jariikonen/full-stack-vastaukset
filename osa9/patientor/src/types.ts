@@ -85,3 +85,11 @@ export interface Patient {
 }
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
+
+export interface EntryFormValues {
+  description: string;
+  date: string;
+  specialist: string;
+  healthCheckRating: string;
+  diagnosisCodes: string[];
+}

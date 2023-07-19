@@ -2,6 +2,7 @@ import patients from "../../data/patients";
 import { v1 as uuid } from "uuid";
 import {
   PatientEntry,
+  Entry,
   NonSensitivePatientEntry,
   NewPatientEntry,
   NewEntry,
@@ -35,7 +36,7 @@ const addPatient = (entry: NewPatientEntry): PatientEntry => {
   return newPatientEntry;
 };
 
-const addEntry = (patientId: string, entry: NewEntry): PatientEntry => {
+const addEntry = (patientId: string, entry: NewEntry): Entry => {
   if (!patients.find((patient) => patient.id === patientId)) {
     throw new Error("Patient not found");
   }
@@ -51,12 +52,7 @@ const addEntry = (patientId: string, entry: NewEntry): PatientEntry => {
     }
   });
 
-  const updatedPatientEntry = patients.find((p) => p.id === patientId);
-  if (!updatedPatientEntry) {
-    throw new Error("Internal server error");
-  }
-
-  return updatedPatientEntry;
+  return newEntry;
 };
 
 export default {

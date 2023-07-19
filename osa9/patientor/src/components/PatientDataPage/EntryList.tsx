@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
-import { Stack } from "@mui/material";
+import { Stack, Typography } from "@mui/material";
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
@@ -80,7 +80,7 @@ interface HealthCheckEntryProps {
 
 const HealthCheckEntry = ({ entry, diagnoses }: HealthCheckEntryProps) => (
   <>
-    <Grid item xs={2}>
+    <Grid item xs={2} id={entry.id}>
       <Stack direction="row" spacing={1}>
         <MonitorHeartIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -112,7 +112,7 @@ interface OccupationalHealthcareEntryProps {
 
 const OccupationalHealthcareEntry = ({ entry, diagnoses }: OccupationalHealthcareEntryProps) => (
   <>
-    <Grid item xs={2}>
+    <Grid item xs={2} id={entry.id}>
       <Stack direction="row" spacing={1}>
         <HomeRepairServiceIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -149,7 +149,7 @@ interface HospitalEntryProps {
 
 const HospitalEntry = ({ entry, diagnoses }: HospitalEntryProps) => (
   <>
-    <Grid item xs={2}>
+    <Grid item xs={2} id={entry.id}>
       <Stack direction="row" spacing={1}>
         <LocalHospitalIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -205,7 +205,10 @@ interface EntryListProps {
 const EntryList = ({ entries, diagnoses }: EntryListProps) => {
   if (entries) {
     return (
-      <Box sx={{ flexGrow: 1 }} style={{ marginTop: 20, marginBottom: 20 }}>
+      <Box sx={{ flexGrow: 1 }} style={{ marginTop: "3rem", marginBottom: "2rem" }}>
+        <Typography align="left" variant="h5" style={{ marginBottom: "1.5rem" }}>
+          Entries
+        </Typography>
         <Grid container rowSpacing={{ xs: 2 }} columnSpacing={{ xs: 0 }}>
           {entries.map((entry) => (
             <Entry key={entry.id} entry={entry} diagnoses={diagnoses} />

@@ -19,7 +19,11 @@ const isString = (text: unknown): text is string => {
 
 const parseStringField = (value: unknown, field: string): string => {
   if (!isString(value)) {
-    throw new Error(`Incorrect or missing ${field}.`);
+    throw new Error(`Incorrect field: ${field} is not a string.`);
+  }
+
+  if (value.length === 0) {
+    throw new Error(`Incorrect field: ${field} is empty.`);
   }
 
   return value;
@@ -79,9 +83,9 @@ const toNewBaseEntry = (object: object): NewBaseEntry => {
   }
 
   const newBaseEntry: NewBaseEntry = {
-    description: baseObject.description as string,
-    date: baseObject.date as string,
-    specialist: baseObject.specialist as string,
+    description: parseStringField(baseObject.description, "description"),
+    date: parseDate(baseObject.date),
+    specialist: parseStringField(baseObject.specialist, "specialist"),
   };
 
   if ("diagnosisCodes" in object) {
@@ -93,6 +97,23 @@ const toNewBaseEntry = (object: object): NewBaseEntry => {
   return newBaseEntry;
 };
 
+const isHealthCheckEntry = (num: number): num is HealthCheckRating => {
+  return Object.values(HealthCheckRating).includes(num);
+};
+
+const parseHealthCheckRating = (param: unknown): HealthCheckRating => {
+  const num = isString(param) ? Number(param) : param;
+  if (
+    typeof num !== "number" ||
+    !Number.isInteger(num) ||
+    !isHealthCheckEntry(num)
+  ) {
+    throw new Error("Incorrect health check rating");
+  }
+
+  return num;
+};
+
 const toNewHealthCheckEntry = (object: object): NewHealthCheckEntry => {
   const newEntry = toNewBaseEntry(object) as NewHealthCheckEntry;
   if (!("healthCheckRating" in object)) {
@@ -100,7 +121,7 @@ const toNewHealthCheckEntry = (object: object): NewHealthCheckEntry => {
   }
 
   newEntry.type = "HealthCheck";
-  newEntry.healthCheckRating = object.healthCheckRating as HealthCheckRating; // EI TARKISTETA!
+  newEntry.healthCheckRating = parseHealthCheckRating(object.healthCheckRating);
   return newEntry;
 };
 
