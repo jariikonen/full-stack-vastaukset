@@ -146,7 +146,7 @@ const toNewOccupationalHealthcareEntry = (
 const toNewHospitalEntry = (object: object): NewHospitalEntry => {
   const newEntry = toNewBaseEntry(object) as NewHospitalEntry;
   if (!("discharge" in object)) {
-    throw new Error("Incorrect hospital-entry");
+    throw new Error("Incorrect hospital-entry: missing discharge field");
   }
 
   newEntry.type = "Hospital";

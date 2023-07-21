@@ -38,7 +38,7 @@ const PatientDataPage = ({ patient }: Props) => {
     return (
       <>
         <PatientData patient={patientObj} />
-        <EntryForm patient={patientObj} setPatient={setPatientObj} />
+        <EntryForm patient={patientObj} setPatient={setPatientObj} diagnoses={diagnoses} />
         <EntryList entries={patientObj.entries} diagnoses={diagnoses} />
       </>
     );

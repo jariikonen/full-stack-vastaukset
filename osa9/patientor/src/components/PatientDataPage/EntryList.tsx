@@ -16,6 +16,7 @@ import {
   HospitalEntry as HospitalType,
 } from "../../types";
 import HealthRatingBar from "../HealthRatingBar";
+import { assertNever } from "../../utils";
 
 const Item = styled("div")(({ theme }) => ({
   ...theme.typography.body1,
@@ -80,7 +81,7 @@ interface HealthCheckEntryProps {
 
 const HealthCheckEntry = ({ entry, diagnoses }: HealthCheckEntryProps) => (
   <>
-    <Grid item xs={2} id={entry.id}>
+    <Grid item xs={2} id={entry.id} style={{ minWidth: "150px" }}>
       <Stack direction="row" spacing={1}>
         <MonitorHeartIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -112,7 +113,7 @@ interface OccupationalHealthcareEntryProps {
 
 const OccupationalHealthcareEntry = ({ entry, diagnoses }: OccupationalHealthcareEntryProps) => (
   <>
-    <Grid item xs={2} id={entry.id}>
+    <Grid item xs={2} id={entry.id} style={{ minWidth: "150px" }}>
       <Stack direction="row" spacing={1}>
         <HomeRepairServiceIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -149,7 +150,7 @@ interface HospitalEntryProps {
 
 const HospitalEntry = ({ entry, diagnoses }: HospitalEntryProps) => (
   <>
-    <Grid item xs={2} id={entry.id}>
+    <Grid item xs={2} id={entry.id} style={{ minWidth: "150px" }}>
       <Stack direction="row" spacing={1}>
         <LocalHospitalIcon />
         <Item style={{ fontWeight: "bold" }}>
@@ -176,13 +177,6 @@ interface EntryProps {
   entry: EntryType;
   diagnoses: DiagnosisType[];
 }
-
-// Helper function for exhaustive type checking
-const assertNever = (value: never): never => {
-  throw new Error(
-    `Unhandled discriminated union member: ${JSON.stringify(value)}`
-  );
-};
 
 const Entry = ({ entry, diagnoses }: EntryProps) => {
   switch (entry.type) {

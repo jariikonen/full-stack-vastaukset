@@ -86,10 +86,30 @@ export interface Patient {
 
 export type PatientFormValues = Omit<Patient, "id" | "entries">;
 
-export interface EntryFormValues {
+export interface BaseFormValues {
   description: string;
   date: string;
   specialist: string;
-  healthCheckRating: string;
   diagnosisCodes: string[];
 }
+
+export interface HealthCheckFormValues extends BaseFormValues {
+  type: "HealthCheck";
+  healthCheckRating: number;
+}
+
+export interface OccupationalHealthcareFormValues extends BaseFormValues {
+  type: "OccupationalHealthcare";
+  employerName: string;
+  sickLeave?: SickLeave;
+}
+
+export interface HospitalFormValues extends BaseFormValues {
+  type: "Hospital";
+  discharge: Discharge;
+}
+
+export type EntryFormValues =
+  | HealthCheckFormValues
+  | OccupationalHealthcareFormValues
+  | HospitalFormValues;
